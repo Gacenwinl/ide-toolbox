@@ -1,0 +1,39 @@
+---
+description: Multi-device AI agent workflow and safety guardrails
+alwaysApply: true
+---
+
+# AI Agent Workflow
+
+Treat project files as the source of truth, not prior chat history.
+
+## Start Every Session
+
+1. Read `AGENTS.md`.
+2. Read `docs/ai-context.md`.
+3. Read `docs/agent-library.md`.
+4. Unless privacy is `private-local`, read `docs/suggested-assets.md` and follow suggested shared assets.
+5. Read task-specific files as needed.
+
+## Agent Library
+
+- Before substantive work, query shared assets when not `private-local`.
+- Never read or promote to `05_Agent-Library` for `private-local` projects.
+- Write back to project docs first; promote only when useful across a second project.
+
+## Before Changing Files
+
+- Check Git status with `git status --short --branch`.
+- If the workspace is dirty, report changes before broad edits.
+- Do not delete, overwrite, move, or push without explicit user confirmation.
+
+## Long-Running Agent Work
+
+- Work in stages: plan, change, verify, summarize.
+- After each stage, state what changed and the suggested commit message.
+- Do not claim completion until evidence has been checked.
+
+## Handoff Rules
+
+- Write important conclusions back to project Markdown files.
+- Do not rely on chat history as the only project memory.
