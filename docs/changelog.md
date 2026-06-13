@@ -2,6 +2,23 @@
 
 ide-toolbox 工具箱自身变更，不是业务项目 changelog。
 
+## 2026-06-14 — 移交记忆收口 + session-handoff（全项目）
+
+### 新增
+
+- `session-handoff.sh`：检查 ai-context 待填写 / Last Session，会话结束清单
+- `./ide` 主菜单与项目菜单：「会话收尾移交检查」
+- 业务模板 `ai-context.md`：Current State / Last Session / Recent Decisions / Open Items
+- 模板 `AGENTS.md`、rules：**会话结束必做**（禁止只留聊天）
+
+### 更新
+
+- `docs/ai-context.md`：复利主线 + 接手状态（工具箱自身可移交）
+- `docs/20260614-ide-toolbox-followup.md` 收口
+- `README.md` Agent 复利一节
+- `project-health.sh`：移交友好性 WARN（待填写、Last Session）
+- `capture-conversation.sh`：提示同步 ai-context + session-handoff
+
 ## 2026-06-14 — Agent Library 复利体系 + 工厂全接线
 
 ### 新增

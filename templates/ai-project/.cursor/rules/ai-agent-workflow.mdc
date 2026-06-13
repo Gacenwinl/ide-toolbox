@@ -37,3 +37,11 @@ Treat project files as the source of truth, not prior chat history.
 
 - Write important conclusions back to project Markdown files.
 - Do not rely on chat history as the only project memory.
+
+## End Every Session（after substantial work）
+
+1. Update `docs/ai-context.md`: **Current State**, **Last Session**, **Recent Decisions**.
+2. Do not leave `Last Session` → Summary as `待填写`.
+3. Run ide-toolbox `session-handoff.sh` on this project path, or `capture-conversation.sh`.
+4. State what changed, why, how to verify, rollback, and suggested commit message (Chinese for user).
+5. The next agent must be able to continue from project files alone.

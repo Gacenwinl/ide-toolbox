@@ -65,10 +65,10 @@ fi
 
 mkdir -p "${TARGET_DIR}/docs"
 
-cat > "$OUTPUT_FILE" <<EOF
-# Conversation Capture — ${PROJECT_NAME}
+cat > "$OUTPUT_FILE" <<'EOF'
+# Conversation Capture — PROJECT_NAME_PLACEHOLDER
 
-Captured at: $(date '+%Y-%m-%d %H:%M:%S')
+Captured at: TIMESTAMP_PLACEHOLDER
 
 ## Goal
 
@@ -106,10 +106,26 @@ docs: capture reusable conversation logic
 
 - Is this output useful in a **second different project**?
 - Have paths, secrets, and ID document details been removed?
-- If yes → run ide-toolbox `promote-agent-asset.sh` or `./ide` → promote to library
-- If no → keep only in this project's `docs/`
-- `private-local` projects must **never** promote to `05_Agent-Library`
+- If yes → run ide-toolbox promote-agent-asset.sh or ./ide promote menu
+- If no → keep only in this project's docs/
+- private-local projects must **never** promote to 05_Agent-Library
+
+## Session Handoff
+
+- Sync docs/ai-context.md: Current State, Last Session, Recent Decisions
+- Run: ./scripts/session-handoff.sh TARGET_DIR_PLACEHOLDER
 EOF
 
+if [[ "$(uname)" == "Darwin" ]]; then
+  sed -i '' "s/PROJECT_NAME_PLACEHOLDER/${PROJECT_NAME//\//\\/}/g" "$OUTPUT_FILE"
+  sed -i '' "s/TIMESTAMP_PLACEHOLDER/$(date '+%Y-%m-%d %H:%M:%S')/g" "$OUTPUT_FILE"
+  sed -i '' "s|TARGET_DIR_PLACEHOLDER|${TARGET_DIR//\//\\/}|g" "$OUTPUT_FILE"
+else
+  sed -i "s/PROJECT_NAME_PLACEHOLDER/${PROJECT_NAME//\//\\/}/g" "$OUTPUT_FILE"
+  sed -i "s/TIMESTAMP_PLACEHOLDER/$(date '+%Y-%m-%d %H:%M:%S')/g" "$OUTPUT_FILE"
+  sed -i "s|TARGET_DIR_PLACEHOLDER|${TARGET_DIR//\//\\/}|g" "$OUTPUT_FILE"
+fi
+
 log "已创建对话复用记录: $OUTPUT_FILE"
-log "请把本次重要结论补充进该文件，并视情况同步到 docs/conversation-reuse.md"
+log "请把本次重要结论补充进该文件，并同步 docs/ai-context.md（Current State / Last Session）"
+log "收尾检查: ./scripts/session-handoff.sh \"$TARGET_DIR\""

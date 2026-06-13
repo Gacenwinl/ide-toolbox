@@ -20,6 +20,17 @@
 - 架构：[docs/architecture.md](docs/architecture.md)
 - 脚本：[docs/scripts-reference.md](docs/scripts-reference.md)
 - 排错：[docs/troubleshooting.md](docs/troubleshooting.md)
+- 跟进：[docs/20260614-ide-toolbox-followup.md](docs/20260614-ide-toolbox-followup.md)
+
+## 会话结束（ substantial 工作后必做）
+
+1. 更新 [docs/ai-context.md](docs/ai-context.md) 的 **Current State** 与 **Last Session**
+2. 更新 [docs/changelog.md](docs/changelog.md)
+3. 多轮改造写 `docs/YYYYMMDD-*-followup.md` 或运行 `./scripts/capture-conversation.sh .`
+4. 运行 `./scripts/session-handoff.sh .` 检查是否可移交
+5. 用中文说明：改了什么、为什么、如何验证、如何回滚、建议 commit message
+
+**禁止**只把结论留在聊天记录里。
 
 ## 默认动作
 
@@ -31,6 +42,7 @@
 - 隐私敏感项目使用 `private-local` 策略
 - 用户要升级已有目录时，优先调用 `scripts/upgrade-ai-project.sh`
 - 用户要沉淀对话逻辑时，优先调用 `scripts/capture-conversation.sh`
+- 用户要收尾移交时，优先调用 `scripts/session-handoff.sh`
 - 用户要归档项目时，优先调用 `scripts/archive-project.sh`，真正移动需 `--execute`
 - 用户要查共享 Agent 资产时，优先调用 `scripts/query-agent-assets.sh` 或 `./ide` → 查询 Agent 资产库
 - 用户要把产出晋升到共享库时，优先调用 `scripts/promote-agent-asset.sh` 或 `./ide` → 晋升资产到库

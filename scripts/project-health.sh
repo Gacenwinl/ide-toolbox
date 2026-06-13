@@ -112,7 +112,19 @@ else
       report_warn "缺少 manifest: $manifest"
     fi
   else
-    report_warn "05_Agent-Library 不可达（可运行 init-agent-library.sh）"
+    handoff_warn "05_Agent-Library 不可达（可运行 init-agent-library.sh）"
+  fi
+  if [[ -f "${TARGET_DIR}/docs/ai-context.md" ]]; then
+    if grep -q "待填写" "${TARGET_DIR}/docs/ai-context.md" 2>/dev/null; then
+      report_warn "ai-context 含「待填写」——会话结束应运行 session-handoff.sh"
+    else
+      report_ok "ai-context 无待填写占位（移交友好）"
+    fi
+    if grep -q "^- Date: (none yet)" "${TARGET_DIR}/docs/ai-context.md" 2>/dev/null; then
+      report_warn "Last Session 未更新——接手者不知上次做到哪"
+    else
+      report_ok "Last Session 已记录日期"
+    fi
   fi
 fi
 

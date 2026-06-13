@@ -35,3 +35,10 @@ IDE_MENU_PLAIN=1 ./ide   # 非交互冒烟（输入 0 退出）
 ```bash
 git checkout -- <file>
 ```
+
+## End A Session（ substantial 工作后）
+
+1. 更新 `docs/ai-context.md` → **Current State** / **Last Session**
+2. 更新 `docs/changelog.md`
+3. `./scripts/session-handoff.sh .` 检查移交就绪
+4. 中文总结：改动、验证、回滚、commit message

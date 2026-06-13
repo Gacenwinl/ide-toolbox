@@ -32,6 +32,15 @@
 - Cursor 项目级规则：`.cursor/rules/ai-agent-workflow.mdc`
 - Codex 用户级规则：见 ide-toolbox `docs/codex-user-rule-template.md`（每台设备配置一次）
 - Codex 项目内入口：`docs/codex-handoff.md`
-- 共享上下文：`docs/ai-context.md`
+- 共享上下文：`docs/ai-context.md`（**Current State / Last Session 为接手入口**）
 - 对话逻辑复用：`docs/conversation-reuse.md`
 - 长跑与恢复：`docs/runbook.md`
+
+## 会话结束（ substantial 工作后必做）
+
+1. 更新 `docs/ai-context.md`：**Current State**、**Last Session**、**Recent Decisions**
+2. 运行 ide-toolbox `./scripts/session-handoff.sh <本项目路径>` 或 `capture-conversation.sh`
+3. 用中文说明：改了什么、为什么、如何验证、如何回滚、建议 commit message
+4. 评估是否晋升到 `05_Agent-Library`（见 `docs/conversation-reuse.md`）
+
+**下一 Agent 应只读项目文件即可接手，不依赖本次聊天。**

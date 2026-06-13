@@ -4,34 +4,54 @@ Captured at: 2026-06-14
 
 ## Goal
 
-收口 ide-toolbox 多轮改造，并落地 Agent Library 复利工厂接线。
+收口 ide-toolbox 多轮改造，落地 Agent Library 复利工厂，并保证**工具箱自身可随时移交**（不依赖聊天）。
 
-## Status（2026-06-14 更新）
+## Decision Logic
+
+| 决策 | 规则 |
+|---|---|
+| Hub 形态 | 目录 + manifest + Git + ide-toolbox 工厂，不是单纯共享文件夹 |
+| 自动挂钩 | `new-ai-project.sh` → `wire_agent_library()` → `suggested-assets.md` |
+| private-local | 全链路跳过 05 |
+| 工具箱记忆 | 与业务项目相同：更新 `ai-context.md` Current State / Last Session + changelog + followup |
+| NAS 细整理 | 归 `260613-nas-storage-optimize`，本仓库不搬文件 |
+
+## Status（2026-06-14 收口）
 
 ### 已完成
 
-- [x] Agent Library 脚本：init / query / promote + `agent-library.py`
-- [x] 工厂接线：new-ai-project `wire_agent_library`、upgrade、health、ide 菜单、capture 模板
-- [x] 模板：agent-library.md、suggested-assets.md、AGENTS/rules/conversation-reuse 更新
-- [x] `docs/devices.md` MacBook CloudStorage 路径登记（2026-06-14）
-- [x] `config/project-policy.yaml` agent_library 路径与开关
-- [x] 文档：scripts-reference、automation-playbook、changelog、codex 用户规则
+- [x] Agent Library：init / query / promote + `agent-library.py`
+- [x] 工厂接线：new / upgrade / batch / health / ide / capture
+- [x] 模板：agent-library、suggested-assets、AGENTS、rules、conversation-reuse
+- [x] `config/project-policy.yaml`：`agent_library.*`
+- [x] 05 库 Git + 2 条种子 playbook
+- [x] ide-toolbox `git push` → `46ec400`
+- [x] MacBook `check-device.sh` 通过
+- [x] `docs/ai-context.md` 复利与接手状态已写回
+- [x] `session-handoff.sh` + 业务项目模板会话结束纪律
+- [x] 验证项目 `260614-agent-wire-test`（suggested-assets 有 2 条）
 
-### 待本机验证
+### 待另端 / 用户
 
-- [ ] `git push` ide-toolbox（commit 后）
-- [ ] MacBook `./scripts/check-device.sh`
-- [ ] Windows / Mac mini `check-device.sh`（另端）
-- [ ] `./ide` → 新建测试项目，检查 `docs/suggested-assets.md`
+- [ ] Windows `check-device.sh`
+- [ ] Mac mini `check-device.sh`
+- [ ] `batch-upgrade.sh --execute` 为旧项目补 agent-library
 
-### 分工（不变）
+## Verification
 
-| 主题 | 归属 |
-|---|---|
-| ide-toolbox 脚本/模板/菜单 | `ide-toolbox` |
-| 05 种子资产内容与 manifest entries | `05_Agent-Library` Git |
-| NAS 备份迁出、`04` 整理 | `260613-nas-storage-optimize` / 用户 |
+```bash
+cd ide-toolbox
+./scripts/check-device.sh
+./scripts/query-agent-assets.sh --task "ide-toolbox 接手"
+./scripts/project-health.sh ../260614-agent-wire-test
+# 接手测试：只读 AGENTS.md + docs/ai-context.md，不应需要本聊天
+```
+
+## Rollback
+
+- ide-toolbox：`git revert 46ec400` 或回退到 `78c1af9`
+- 05 库：在 `05_Agent-Library` 内 `git log` 后 revert 对应 commit
 
 ## Suggested Commit Message
 
-`feat(ide): wire agent library into new/upgrade/health/ide; query and promote scripts`
+`docs(ide): complete handoff memory and session-handoff for all projects`

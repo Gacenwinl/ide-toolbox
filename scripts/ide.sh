@@ -17,6 +17,7 @@ MAIN_MENU_ITEMS=(
   "项目体检"
   "升级已有目录"
   "沉淀对话记忆"
+  "会话收尾移交检查"
   "登记当前设备到项目"
   "扫描并升级旧项目 (dry-run)"
   "设备接入检查"
@@ -37,6 +38,7 @@ PATH_MENU_ITEMS=(
   "项目体检"
   "升级成 Cursor/Codex 多端项目"
   "沉淀对话记忆"
+  "会话收尾移交检查"
   "登记当前设备"
   "刷新 suggested-assets"
   "晋升本项目资产到库"
@@ -163,6 +165,18 @@ action_capture() {
     "${SCRIPT_DIR}/capture-conversation.sh" "$TARGET_PATH"
   fi
 }
+
+action_session_handoff() {
+  ensure_existing_path
+  local summary
+  read -r -p "Last Session 摘要（可留空，仅检查）: " summary
+  if [[ -n "$summary" ]]; then
+    "${SCRIPT_DIR}/session-handoff.sh" "$TARGET_PATH" --summary "$summary"
+  else
+    "${SCRIPT_DIR}/session-handoff.sh" "$TARGET_PATH"
+  fi
+}
+
 action_register_device() {
   ensure_existing_path
   local note
@@ -322,20 +336,21 @@ dispatch_home_choice() {
     4) action_health ;;
     5) action_upgrade ;;
     6) action_capture ;;
-    7) action_register_device ;;
-    8) action_batch_upgrade ;;
-    9) action_check_device ;;
-    10) action_github_check ;;
-    11) action_archive_preview ;;
-    12) action_archive_execute ;;
-    13) action_show_index ;;
-    14) action_show_storage_policy ;;
-    15) action_query_agent_library ;;
-    16) action_promote_agent_asset ;;
-    17) action_init_agent_library ;;
-    18) action_change_path ;;
-    19) action_show_codex_setup ;;
-    20) exit 0 ;;
+    7) action_session_handoff ;;
+    8) action_register_device ;;
+    9) action_batch_upgrade ;;
+    10) action_check_device ;;
+    11) action_github_check ;;
+    12) action_archive_preview ;;
+    13) action_archive_execute ;;
+    14) action_show_index ;;
+    15) action_show_storage_policy ;;
+    16) action_query_agent_library ;;
+    17) action_promote_agent_asset ;;
+    18) action_init_agent_library ;;
+    19) action_change_path ;;
+    20) action_show_codex_setup ;;
+    21) exit 0 ;;
     *) warn "无效选项: $choice"; return 1 ;;
   esac
 }
@@ -375,16 +390,17 @@ run_path_choice() {
     1) action_health ;;
     2) action_upgrade ;;
     3) action_capture ;;
-    4) action_register_device ;;
-    5) action_refresh_suggested_assets ;;
-    6) action_promote_agent_asset ;;
-    7) action_git_status ;;
-    8) action_github_check ;;
-    9) action_archive_preview ;;
-    10) action_archive_execute ;;
-    11) action_change_path ;;
-    12) return 2 ;;
-    13|0|q|Q) exit 0 ;;
+    4) action_session_handoff ;;
+    5) action_register_device ;;
+    6) action_refresh_suggested_assets ;;
+    7) action_promote_agent_asset ;;
+    8) action_git_status ;;
+    9) action_github_check ;;
+    10) action_archive_preview ;;
+    11) action_archive_execute ;;
+    12) action_change_path ;;
+    13) return 2 ;;
+    14|0|q|Q) exit 0 ;;
     *) warn "无效选项: $1" ;;
   esac
 }

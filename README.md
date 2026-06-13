@@ -43,7 +43,24 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 - 隐私分级：`private-local` 禁止 GitHub
 - 设备接入检查 + 项目设备登记
 - Codex 用户级规则模板（对齐 Cursor 项目级 rules）
+- **Agent 复利**：`05_Agent-Library` + 新建项目自动 `suggested-assets.md`（见下节）
 - 多端路径：**MacBook / Windows** Drive 同步 · **Mac mini** NAS 挂载（见 `storage-policy.md`）
+
+## Agent 复利（Hub）
+
+跨项目 Skill/playbook 不进聊天，而走：
+
+1. **L1** 项目内 `docs/ai-context.md`（Current State / Last Session）
+2. **L2** `02_Resources Files/05_Agent-Library` + `manifest.yaml`
+3. **工厂**：`./ide` → 11) 新建项目 → 自动 `docs/suggested-assets.md`
+
+```bash
+./scripts/query-agent-assets.sh --task "任务关键词"
+./scripts/promote-agent-asset.sh --project /path --source docs/x.md --id slug --title "标题"
+./scripts/session-handoff.sh /path/to/project   # 会话结束检查
+```
+
+详见 [storage-policy.md](storage-policy.md) §05、[docs/ai-context.md](docs/ai-context.md)。
 
 ## 验证
 
