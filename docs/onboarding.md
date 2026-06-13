@@ -144,6 +144,8 @@ gh auth login   # 需你确认安装 gh
 ```bash
 ./scripts/new-ai-project.sh 260614-test-onboarding --purpose "接入验证" --dry-run
 ./scripts/new-ai-project.sh 260614-test-onboarding --purpose "接入验证"
+```
+
 MacBook 示例：
 
 ```bash
@@ -168,6 +170,22 @@ Mac mini 示例：
 
 `./ide` → **25) Codex 接入与用户规则**
 
+## Obsidian（可选）
+
+Obsidian 只能作为**同一批 Markdown 的阅读界面**，不要另建一套 Agent 记忆。
+
+推荐：
+
+- Vault 直接打开 `~/Library/CloudStorage/SynologyDrive-FileStation` 或其中的项目目录
+- 项目状态仍写 `docs/ai-context.md`，跨项目资产仍写 `02_Resources Files/05_Agent-Library/manifest.yaml`
+- Obsidian 只负责双链、浏览、人工整理；Agent 接手仍以 `AGENTS.md` 和 `docs/ai-context.md` 为真相源
+
+不推荐：
+
+- 另建 “Agent Memory Vault” 并复制项目结论
+- 把 `private-local` 项目放入公共 vault
+- 用 Obsidian 链接替代 `session-handoff.sh` 或 `query-agent-assets.sh`
+
 ## 接入完成检查清单
 
 - [ ] `./scripts/check-device.sh` 活动目录为**本设备推荐路径**
@@ -175,6 +193,8 @@ Mac mini 示例：
 - [ ] Cursor 打开路径与 `./ide` 一致（不混用挂载/同步）
 - [ ] 已登记当前设备到 `docs/devices.md`
 - [ ] （Codex）用户规则已配置
+- [ ] substantial 工作结束前知道如何运行 `session-handoff.sh`
+- [ ] （可选 Obsidian）确认没有第二套 Agent 记忆
 - [ ] （可选）`gh auth login` 完成
 
 ## 下一步

@@ -45,6 +45,8 @@
 - 以项目内 Markdown 文件和 Git 为真相源
 - 不要把聊天记录当作项目唯一记忆
 - 重要结论必须写回项目文件（优先 `docs/ai-context.md`，或 `docs/YYYYMMDD-主题.md`）
+- substantial 工作结束前必须更新 `docs/ai-context.md` 的 `Current State` / `Last Session` / `Recent Decisions`
+- 会话结束前运行 ide-toolbox `scripts/session-handoff.sh <项目路径>`；若有 WARN，先处理再结束
 - 会话结束前说明：改了什么、为什么、如何验证、如何回滚、建议 commit message
 
 ## 动手前
@@ -71,6 +73,7 @@
 
 - 尊重项目 `docs/ai-context.md` 中的 Privacy Profile
 - `private-local` 项目禁止创建 GitHub 仓库或 push
+- Obsidian 只能作为同一批 Markdown 的阅读界面，不能另建第二套 Agent 记忆；private-local 项目不放入公共 vault
 
 ## 输出
 
@@ -85,6 +88,7 @@
 - 「查一下资产库有没有适合这个项目的共享技能」→ 运行 query-agent-assets.sh
 - 「把本次产出晋升到 Agent Library」→ 运行 promote-agent-asset.sh（去敏后）
 - 「刷新这个项目的 suggested-assets」→ query 并写入 docs/suggested-assets.md
+- 「检查这个项目能否移交」→ 运行 session-handoff.sh，并根据 WARN 更新 ai-context
 ```
 
 ## 可复制正文（结束）
@@ -99,7 +103,7 @@
 请先按 AGENTS.md 和 runbook 说明你将读取哪些文件，以及如何写回项目记忆。不要改代码。
 ```
 
-期望 Codex 能列出 `AGENTS.md`、`docs/ai-context.md`、`docs/runbook.md`，并说明写回策略。
+期望 Codex 能列出 `AGENTS.md`、`docs/ai-context.md`、`docs/runbook.md`，说明写回策略，并提到 substantial 工作后运行 `session-handoff.sh`。
 
 ---
 

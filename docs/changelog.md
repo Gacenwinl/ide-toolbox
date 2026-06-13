@@ -2,6 +2,14 @@
 
 ide-toolbox 工具箱自身变更，不是业务项目 changelog。
 
+## 2026-06-14 — Codex 规则与 Obsidian 边界收敛
+
+### 更新
+
+- `docs/codex-user-rule-template.md`：补入 `session-handoff.sh`、`Current State` / `Last Session` 会话结束要求
+- `docs/onboarding.md`：明确 Obsidian 只能作为同一批 Markdown 的阅读界面，不能成为第二套 Agent 记忆
+- `docs/ai-context.md` / followup：记录 Codex=L3 兜底、Obsidian=人类阅读 UI、项目文件与 05 manifest 仍是真相源
+
 ## 2026-06-14 — 稳定性收敛审计
 
 ### 修复
