@@ -295,3 +295,124 @@ project_missing_scaffold() {
   local dir="$1"
   [[ ! -f "${dir}/AGENTS.md" || ! -f "${dir}/docs/runbook.md" ]]
 }
+
+plain_menu_select() {
+  local title="$1"
+  shift
+  local options=("$@")
+  local i=1 choice
+  printf '\n%s\n' "$title" >&2
+  for opt in "${options[@]}"; do
+    printf '  %2d) %s\n' "$i" "$opt" >&2
+    i=$((i + 1))
+  done
+  if [[ -r /dev/tty ]]; then
+    read -r -p "请输入数字: " choice </dev/tty
+  else
+    read -r -p "请输入数字: " choice
+  fi
+  printf '%s' "$choice"
+}
+
+interactive_menu_select() {
+  local title="$1"
+  shift
+  local options=("$@")
+  local count=${#options[@]}
+  local selected=0
+  local key seq num key2
+  local menu_lines=0
+  local stty_save=""
+
+  [[ "$count" -gt 0 ]] || die "菜单为空"
+
+  if [[ ! -t 0 ]] || [[ "${IDE_MENU_PLAIN:-}" == "1" ]] || [[ ! -w /dev/tty ]]; then
+    plain_menu_select "$title" "${options[@]}"
+    return 0
+  fi
+
+  stty_save="$(stty -g </dev/tty 2>/dev/null || true)"
+  if [[ -z "$stty_save" ]]; then
+    plain_menu_select "$title" "${options[@]}"
+    return 0
+  fi
+
+  cleanup_menu_tty() {
+    stty "$stty_save" </dev/tty 2>/dev/null || stty sane </dev/tty 2>/dev/null || true
+  }
+
+  draw_menu() {
+    local s="$1"
+    local i
+    if [[ "$menu_lines" -gt 0 ]]; then
+      printf '\033[%dA\033[J' "$menu_lines" >/dev/tty
+    fi
+    menu_lines=$((count + 3))
+    {
+      printf '\n%s\n' "$title"
+      for i in "${!options[@]}"; do
+        if [[ "$i" -eq "$s" ]]; then
+          printf ' \033[7m %2d) %s \033[0m\n' "$((i + 1))" "${options[$i]}"
+        else
+          printf '   %2d) %s\n' "$((i + 1))" "${options[$i]}"
+        fi
+      done
+      printf ' (↑↓ 移动 · 回车确认 · 数字直达 · 0 退出)\n'
+    } >/dev/tty
+  }
+
+  finish_menu() {
+    local result="$1"
+    cleanup_menu_tty
+    trap - EXIT INT TERM
+    printf '%s' "$result"
+  }
+
+  trap 'cleanup_menu_tty' EXIT INT TERM
+  stty -echo -icanon time 0 min 0 </dev/tty 2>/dev/null || {
+    cleanup_menu_tty
+    trap - EXIT INT TERM
+    plain_menu_select "$title" "${options[@]}"
+    return 0
+  }
+
+  draw_menu "$selected"
+  while true; do
+    if ! IFS= read -rsn1 key </dev/tty; then
+      finish_menu "0"
+      return 0
+    fi
+    case "$key" in
+      '')
+        finish_menu "$((selected + 1))"
+        return 0
+        ;;
+      $'\x1b')
+        if IFS= read -rsn2 -t 0.05 seq </dev/tty 2>/dev/null; then
+          case "$seq" in
+            '[A'|'OA') selected=$(( (selected - 1 + count) % count )); draw_menu "$selected" ;;
+            '[B'|'OB') selected=$(( (selected + 1) % count )); draw_menu "$selected" ;;
+          esac
+        fi
+        ;;
+      [0-9])
+        num="$key"
+        if IFS= read -rsn1 -t 0.35 key2 </dev/tty 2>/dev/null && [[ "$key2" =~ ^[0-9]$ ]]; then
+          num="${num}${key2}"
+        fi
+        if [[ "$num" == "0" ]]; then
+          finish_menu "0"
+          return 0
+        fi
+        if [[ "$num" =~ ^[0-9]+$ ]] && (( num >= 1 && num <= count )); then
+          finish_menu "$num"
+          return 0
+        fi
+        ;;
+      q|Q)
+        finish_menu "0"
+        return 0
+        ;;
+    esac
+  done
+}

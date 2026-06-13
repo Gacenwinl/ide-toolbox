@@ -1,5 +1,7 @@
 # IDE Toolbox — 项目自动化工具箱
 
+> 可视化总览：用浏览器打开 [README.html](README.html)
+
 Cursor/Codex 多端项目的统一启动与治理目录。日常入口：`./ide`。
 
 ## 快速开始
@@ -23,8 +25,9 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 |---|---|
 | [docs/README.md](docs/README.md) | 文档总索引 |
 | [docs/onboarding.md](docs/onboarding.md) | 新设备接入 |
+| [docs/codex-onboarding.md](docs/codex-onboarding.md) | Codex 用户规则与接入 |
 | [automation-playbook.md](automation-playbook.md) | 日常操作 |
-| [storage-policy.md](storage-policy.md) | 存储策略 |
+| [storage-policy.md](storage-policy.md) | 存储策略（含群晖/Mac/Windows 路径对照） |
 | [docs/architecture.md](docs/architecture.md) | 系统架构 |
 | [docs/scripts-reference.md](docs/scripts-reference.md) | 脚本参考 |
 | [docs/troubleshooting.md](docs/troubleshooting.md) | 故障排查 |
@@ -37,6 +40,7 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 - 新建 / 升级 / 体检 / 归档 / 对话沉淀
 - 隐私分级：`private-local` 禁止 GitHub
 - 设备接入检查 + 项目设备登记
+- Codex 用户级规则模板（对齐 Cursor 项目级 rules）
 - Windows 使用 Git Bash（路径见 `config/project-policy.yaml`）
 
 ## 验证

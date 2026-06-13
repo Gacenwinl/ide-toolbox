@@ -8,6 +8,8 @@
 4. 查 `NOTION_INDEX.md`
 5. 查 `data/tasks-master.csv`
 
+**Codex 用户**：确保已配置 ide-toolbox `docs/codex-user-rule-template.md` 中的用户级规则；通用接手流程见该模板中的 Notion 条目。
+
 ## 常见操作
 
 | 用户请求 | 操作 |

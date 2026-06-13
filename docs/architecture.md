@@ -25,6 +25,9 @@ flowchart TD
 | 文件同步层 | Synology Drive / NAS | 活动文件同步、备份 |
 | 项目主线层 | Git + GitHub private | 代码、规则、Agent 上下文 |
 | 执行层 | Cursor / Codex | 编码、长跑 Agent、对话 |
+
+**Cursor / Codex 分工**：Cursor 靠 `.cursor/rules` 自动加载项目规则；Codex 靠用户级规则（见 `docs/codex-user-rule-template.md`）+ 项目内 `AGENTS.md` / `docs/codex-handoff.md`。文件记忆层两边共用。
+
 | 治理层 | ide-toolbox（IDE Toolbox） | 新建、升级、体检、归档、设备登记 |
 
 **原则**：不要把 Cursor/Codex 聊天记录当作项目唯一记忆； durable 内容写入项目文件。
@@ -123,6 +126,7 @@ flowchart LR
 - `docs/ai-context.md`
 - `docs/runbook.md`
 - `docs/conversation-reuse.md`
+- `docs/codex-handoff.md`
 - `docs/devices.md`
 - `.gitignore`
 

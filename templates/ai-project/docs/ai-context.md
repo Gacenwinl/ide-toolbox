@@ -14,8 +14,16 @@
 - Session entry: `AGENTS.md`
 - Project overview: `README.md`
 - Runbook: `docs/runbook.md`
+- Codex handoff: `docs/codex-handoff.md`
 - Conversation reuse: `docs/conversation-reuse.md`
 - Device ledger: `docs/devices.md`
+
+## Cursor vs Codex
+
+| Tool | How rules load |
+|---|---|
+| Cursor | `.cursor/rules/*.mdc` auto-applies + this file |
+| Codex | User-level rule (toolbox template) + read this file and `docs/codex-handoff.md` each session |
 
 ## Multi-Device Workflow
 

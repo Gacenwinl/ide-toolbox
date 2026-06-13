@@ -2,6 +2,42 @@
 
 ide-toolbox 工具箱自身变更，不是业务项目 changelog。
 
+## 2026-06-13 — 可视化 README.html
+
+### 新增
+
+- `README.html` 单文件可视化总览（渐变暗色主题、架构/能力/文档导航）
+
+### 更新
+
+- `README.md`、`docs/README.md` 增加 HTML 入口链接
+
+## 2026-06-13 — Codex 用户规则与接入文档
+
+### 新增
+
+- `docs/codex-onboarding.md` Codex 接入指南
+- `docs/codex-user-rule-template.md` 可复制用户级规则正文
+- `templates/ai-project/docs/codex-handoff.md` 业务项目内 Codex 接手入口
+- `./ide` 主菜单「Codex 接入与用户规则」
+
+### 更新
+
+- `templates/ai-project/AGENTS.md`、`docs/ai-context.md`
+- `scripts/upgrade-ai-project.sh`、`scripts/project-health.sh`
+- `docs/onboarding.md`、`docs/architecture.md`、`AGENTS.md`
+
+## 2026-06-13 — 方向键菜单 + 多端存储文档补全
+
+### 新增
+
+- `interactive_menu_select`：主菜单 / 项目菜单 / 最近项目支持 ↑↓ + 数字双模式
+- `storage-policy.md` 增加群晖 / Mac / Windows 路径对照与同步分工说明
+
+### 更新
+
+- `docs/onboarding.md`、`docs/scripts-reference.md`、`README.md`
+
 ## 2026-06-13 — Notion 项目模板 + Git 初始化
 
 ### 新增

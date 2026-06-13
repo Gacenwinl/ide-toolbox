@@ -23,6 +23,7 @@
 9. GitHub 就绪检查
 10. 归档预览 / 执行
 11. 查看项目索引 / 存储策略
+12. Codex 接入与用户规则（`docs/codex-onboarding.md`）
 
 ## 隐私策略
 

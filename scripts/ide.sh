@@ -10,6 +10,40 @@ if [[ $# -gt 0 ]]; then
   TARGET_PATH="$(normalize_dragged_path "$*")"
 fi
 
+MAIN_MENU_ITEMS=(
+  "从最近项目选择"
+  "新建多端 AI 项目"
+  "新建 Notion 维护项目"
+  "项目体检"
+  "升级已有目录"
+  "沉淀对话记忆"
+  "登记当前设备到项目"
+  "扫描并升级旧项目 (dry-run)"
+  "设备接入检查"
+  "检查 GitHub 就绪情况"
+  "归档预览"
+  "归档执行"
+  "查看项目索引"
+  "查看存储策略"
+  "更换目标路径"
+  "Codex 接入与用户规则"
+  "退出"
+)
+
+PATH_MENU_ITEMS=(
+  "项目体检"
+  "升级成 Cursor/Codex 多端项目"
+  "沉淀对话记忆"
+  "登记当前设备"
+  "检查 Git 状态"
+  "检查 GitHub 就绪情况"
+  "归档预览 (dry-run)"
+  "归档执行"
+  "更换目标路径"
+  "返回主菜单"
+  "退出"
+)
+
 print_header() {
   printf '\n========================================\n'
   printf ' IDE Toolbox\n'
@@ -42,9 +76,17 @@ ensure_existing_path() {
 }
 
 action_pick_recent_project() {
-  print_recent_projects
-  local choice
-  read -r -p "选择最近项目编号: " choice
+  list_recent_projects
+  if [[ "${#RECENT_PROJECT_PATHS[@]}" -eq 0 ]]; then
+    die "暂无最近活动项目"
+  fi
+  local labels=() choice
+  local path
+  for path in "${RECENT_PROJECT_PATHS[@]}"; do
+    labels+=("$(basename "$path")")
+  done
+  choice="$(interactive_menu_select "最近活动项目:" "${labels[@]}")"
+  [[ "$choice" == "0" ]] && return 0
   TARGET_PATH="$(select_recent_project "$choice")"
   log "已选择: $TARGET_PATH"
 }
@@ -156,51 +198,32 @@ action_github_check() {
 }
 action_show_index() { [[ -f "$INDEX_FILE" ]] && cat "$INDEX_FILE" || warn "项目索引不存在"; }
 action_show_storage_policy() { cat "${TOOLBOX_ROOT}/storage-policy.md"; }
+action_show_codex_setup() {
+  cat "${TOOLBOX_ROOT}/docs/codex-onboarding.md"
+  printf '\n========================================\n'
+  printf ' 用户规则模板（复制到 Codex User Rules）\n'
+  printf '========================================\n\n'
+  sed -n '/^```text$/,/^```$/p' "${TOOLBOX_ROOT}/docs/codex-user-rule-template.md" | sed '1d;$d'
+  printf '\n完整说明见: %s/docs/codex-user-rule-template.md\n' "$TOOLBOX_ROOT"
+}
 action_change_path() { prompt_path; }
 
 show_main_menu() {
   print_header
   printf '\n最近活动项目:\n'
   print_recent_projects
-  cat <<'EOF'
-
-主菜单:
-  1) 从最近项目选择
-  2) 新建多端 AI 项目
-  3) 新建 Notion 维护项目
-  4) 项目体检
-  5) 升级已有目录
-  6) 沉淀对话记忆
-  7) 登记当前设备到项目
-  8) 扫描并升级旧项目 (dry-run)
-  9) 设备接入检查
-  10) 检查 GitHub 就绪情况
-  11) 归档预览
-  12) 归档执行
-  13) 查看项目索引
-  14) 查看存储策略
-  15) 更换目标路径
-  0) 退出
-EOF
 }
 
 show_path_menu() {
   print_header
-  cat <<'EOF'
+}
 
-项目操作:
-  1) 项目体检
-  2) 升级成 Cursor/Codex 多端项目
-  3) 沉淀对话记忆
-  4) 登记当前设备
-  5) 检查 Git 状态
-  6) 检查 GitHub 就绪情况
-  7) 归档预览 (dry-run)
-  8) 归档执行
-  9) 更换目标路径
-  10) 返回主菜单
-  0) 退出
-EOF
+read_main_menu_choice() {
+  interactive_menu_select "主菜单:" "${MAIN_MENU_ITEMS[@]}"
+}
+
+read_path_menu_choice() {
+  interactive_menu_select "项目操作:" "${PATH_MENU_ITEMS[@]}"
 }
 
 run_main_choice() {
@@ -220,7 +243,8 @@ run_main_choice() {
     13) action_show_index ;;
     14) action_show_storage_policy ;;
     15) action_change_path ;;
-    0|q|Q) exit 0 ;;
+    16) action_show_codex_setup ;;
+    17|0|q|Q) exit 0 ;;
     *) warn "无效选项: $1" ;;
   esac
 }
@@ -237,20 +261,21 @@ run_path_choice() {
     8) action_archive_execute ;;
     9) action_change_path ;;
     10) return 2 ;;
-    0|q|Q) exit 0 ;;
+    11|0|q|Q) exit 0 ;;
     *) warn "无效选项: $1" ;;
   esac
 }
 
 main_loop() {
+  local choice rc
   while true; do
     if [[ -n "$TARGET_PATH" && -d "$TARGET_PATH" ]]; then
       show_path_menu
-      read -r -p $'请输入数字: ' choice
+      choice="$(read_path_menu_choice)"
       run_path_choice "$choice"
     else
       show_main_menu
-      read -r -p $'请输入数字: ' choice
+      choice="$(read_main_menu_choice)"
       run_main_choice "$choice"
     fi
     rc=$?

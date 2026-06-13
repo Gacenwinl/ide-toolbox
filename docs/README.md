@@ -6,7 +6,11 @@ IDE Toolbox（`ide-toolbox`）工具箱文档入口。先看 [README.md](../READ
 
 | 文档 | 用途 |
 |---|---|
+| [../README.html](../README.html) | 可视化总览（浏览器打开） |
+| [../README.md](../README.md) | 文本总入口 |
 | [onboarding.md](onboarding.md) | 新设备 5 分钟接入（Mac / Windows Git Bash / Mac mini） |
+| [codex-onboarding.md](codex-onboarding.md) | Codex 用户规则配置与自检 |
+| [codex-user-rule-template.md](codex-user-rule-template.md) | Codex 用户规则可复制正文 |
 | [../automation-playbook.md](../automation-playbook.md) | 日常操作与 `./ide` 菜单 |
 | [../storage-policy.md](../storage-policy.md) | NAS/Drive 存储分层与项目生命周期 |
 | [troubleshooting.md](troubleshooting.md) | 常见问题与修复 |
@@ -33,8 +37,9 @@ IDE Toolbox（`ide-toolbox`）工具箱文档入口。先看 [README.md](../READ
 **第一次使用**
 
 1. onboarding.md
-2. automation-playbook.md
-3. storage-policy.md
+2. codex-onboarding.md（若使用 Codex）
+3. automation-playbook.md
+4. storage-policy.md
 
 **长跑 Agent 前**
 

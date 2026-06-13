@@ -21,6 +21,8 @@
 ## 多端交接
 
 - Cursor 项目级规则：`.cursor/rules/ai-agent-workflow.mdc`
+- Codex 用户级规则：见 ide-toolbox `docs/codex-user-rule-template.md`（每台设备配置一次）
+- Codex 项目内入口：`docs/codex-handoff.md`
 - 共享上下文：`docs/ai-context.md`
 - 对话逻辑复用：`docs/conversation-reuse.md`
 - 长跑与恢复：`docs/runbook.md`

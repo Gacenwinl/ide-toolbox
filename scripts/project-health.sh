@@ -69,7 +69,7 @@ if is_notion_project "$TARGET_DIR"; then
     report_ok "存在 .env.example（未配置 .env）"
   fi
 else
-  for file in AGENTS.md docs/ai-context.md docs/runbook.md docs/conversation-reuse.md docs/devices.md; do
+  for file in AGENTS.md docs/ai-context.md docs/runbook.md docs/conversation-reuse.md docs/codex-handoff.md docs/devices.md; do
     if [[ -f "${TARGET_DIR}/${file}" ]]; then
       report_ok "存在 ${file}"
     else

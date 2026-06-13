@@ -40,6 +40,15 @@
 - 每次修改后说明：改了什么、为什么改、如何验证、如何回滚
 - 修改工具箱后更新 [docs/changelog.md](docs/changelog.md)
 
+## Cursor vs Codex
+
+| 工具 | 项目级自动规则 | 推荐补齐 |
+|---|---|---|
+| Cursor | `.cursor/rules/*.mdc`（新建项目自带） | 用户级规则可选 |
+| Codex | 无 `.codex/rules` | **用户级规则必配一次** → [docs/codex-user-rule-template.md](docs/codex-user-rule-template.md) |
+
+业务项目内 `docs/codex-handoff.md` 供 Codex 每次会话快速接手。
+
 ## 自动化口令
 
 - `新建一个多端 AI 项目，名字叫 xxx，用途是 xxx`

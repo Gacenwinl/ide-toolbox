@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IDE Toolbox — 多端 AI 项目工具箱</title>
+  <style>
+    :root {
+      --bg0: #070b14;
+      --bg1: #0f1729;
+      --card: rgba(255, 255, 255, 0.06);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text: #e8eef8;
+      --muted: #9fb0cc;
+      --accent: #6ee7ff;
+      --accent2: #a78bfa;
+      --accent3: #f472b6;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: var(--bg0);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(110, 231, 255, 0.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(167, 139, 250, 0.2), transparent 55%),
+        radial-gradient(800px 500px at 50% 110%, rgba(244, 114, 182, 0.14), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 56px 24px 40px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 22px;
+      backdrop-filter: blur(8px);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 12px var(--ok);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.65; transform: scale(0.92); }
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 45%, var(--accent2) 75%, var(--accent3) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      font-size: 1.12rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 36px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      color: #041018;
+      background: linear-gradient(135deg, var(--accent), #38bdf8);
+      box-shadow: 0 12px 30px rgba(110, 231, 255, 0.25);
+    }
+
+    .btn-ghost {
+      color: var(--text);
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .code-hero {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: left;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .code-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--card-border);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #f87171; }
+    .dot.y { background: #fbbf24; }
+    .dot.g { background: #34d399; }
+
+    pre {
+      padding: 18px 20px 22px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.92rem;
+      color: #d7e3f4;
+    }
+
+    .kw { color: #7dd3fc; }
+    .str { color: #86efac; }
+    .cm { color: #64748b; }
+
+    section { margin-top: 56px; }
+
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(110, 231, 255, 0.35);
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .layers {
+      display: grid;
+      gap: 12px;
+    }
+
+    .layer {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+      background: linear-gradient(90deg, rgba(255,255,255,0.03), transparent);
+    }
+
+    .layer-tag {
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.92rem;
+    }
+
+    th {
+      color: var(--accent);
+      background: rgba(255,255,255,0.04);
+      font-weight: 600;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .pill-ok { background: rgba(52, 211, 153, 0.15); color: var(--ok); }
+    .pill-warn { background: rgba(251, 191, 36, 0.15); color: var(--warn); }
+
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .doc-link {
+      display: block;
+      padding: 14px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+      transition: all 0.2s ease;
+    }
+
+    .doc-link:hover {
+      border-color: rgba(167, 139, 250, 0.45);
+      background: rgba(167, 139, 250, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .doc-link strong { display: block; margin-bottom: 4px; }
+    .doc-link span { color: var(--muted); font-size: 0.86rem; }
+
+    footer {
+      margin-top: 72px;
+      padding-top: 28px;
+      border-top: 1px solid var(--card-border);
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .layer { grid-template-columns: 1fr; gap: 6px; }
+      .wrap { padding-top: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="grid-overlay"></div>
+
+  <div class="wrap">
+    <header class="hero">
+      <div class="badge"><span class="badge-dot"></span> Cursor / Codex 多端就绪 · 群晖 NAS 同步</div>
+      <h1>IDE Toolbox</h1>
+      <p class="subtitle">
+        不依赖聊天记录的多端 AI 项目工具箱。文件在 NAS，记忆在项目 Markdown，版本在 Git。
+        一个入口 <code>./ide</code>，方向键或数字，开箱长跑。
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="automation-playbook.md">📘 日常操作手册</a>
+        <a class="btn btn-ghost" href="docs/onboarding.md">🚀 新设备接入</a>
+        <a class="btn btn-ghost" href="docs/codex-onboarding.md">🤖 Codex 配置</a>
+        <a class="btn btn-ghost" href="https://github.com/Gacenwinl/ide-toolbox">GitHub Private</a>
+      </div>
+      <div class="code-hero">
+        <div class="code-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span>terminal — ide-toolbox</span>
+        </div>
+        <pre><span class="cm"># 进入工具箱</span>
+<span class="kw">cd</span> <span class="str">"/Volumes/home/Drive/00_FileStation/ide-toolbox"</span>
+<span class="kw">./ide</span>
+
+<span class="cm"># 拖入项目路径</span>
+<span class="kw">./ide</span> <span class="str">/Volumes/home/Drive/00_FileStation/你的项目名</span></pre>
+      </div>
+    </header>
+
+    <section>
+      <h2>四层架构</h2>
+      <p class="section-desc">文件同步、项目主线、AI 执行、治理自动化 —— 各干各的，不互相替代。</p>
+      <div class="layers">
+        <div class="layer">
+          <div class="layer-tag">同步层</div>
+          <div>群晖 NAS / Synology Drive — 活动文件备份与多设备文件一致</div>
+        </div>
+        <div class="layer">
+          <div class="layer-tag">主线层</div>
+          <div>Git + GitHub Private — 代码、规则、Agent 上下文版本</div>
+        </div>
+        <div class="layer">
+          <div class="layer-tag">执行层</div>
+          <div>Cursor / Codex — 编码、长跑 Agent（聊天不作为唯一记忆）</div>
+        </div>
+        <div class="layer">
+          <div class="layer-tag">治理层</div>
+          <div>ide-toolbox / <code>./ide</code> — 新建、体检、升级、沉淀、归档</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>核心能力</h2>
+      <p class="section-desc">你少说路径和结构，Agent 多写回项目文件。</p>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">🎛️</div>
+          <h3>单一入口 ./ide</h3>
+          <p>最近项目列表、方向键菜单、新建 AI / Notion 项目、体检与归档。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧠</div>
+          <h3>项目文件记忆</h3>
+          <p>AGENTS.md、runbook、ai-context — 换设备不丢上下文。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <h3>隐私分级</h3>
+          <p>private-local 禁止 GitHub；求职/签证类只留本地与 NAS。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📓</div>
+          <h3>Notion 双轨</h3>
+          <p>manifest + NOTION_INDEX + CSV 镜像，本地结构、Notion 执行。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖥️</div>
+          <h3>多端路径</h3>
+          <p>Mac 挂载 / Drive 同步、Windows Git Bash 映射盘，文档已对照。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏃</div>
+          <h3>长跑护栏</h3>
+          <p>分阶段执行、高风险确认、dry-run 归档，符合全权放任习惯。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Cursor vs Codex</h2>
+      <p class="section-desc">文件层完全共用；规则加载方式不同，已分别适配。</p>
+      <table>
+        <thead>
+          <tr><th>能力</th><th>Cursor</th><th>Codex</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>项目级自动规则</td>
+            <td><span class="pill pill-ok">.cursor/rules 自动加载</span></td>
+            <td><span class="pill pill-warn">需用户级规则一次</span></td>
+          </tr>
+          <tr>
+            <td>项目记忆文件</td>
+            <td>AGENTS.md + docs/*</td>
+            <td>同左 + codex-handoff.md</td>
+          </tr>
+          <tr>
+            <td>工具箱 ./ide</td>
+            <td>✅</td>
+            <td>✅</td>
+          </tr>
+          <tr>
+            <td>配置文档</td>
+            <td>模板自带</td>
+            <td><a href="docs/codex-user-rule-template.md" style="color:var(--accent)">用户规则模板</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>存储路径速查</h2>
+      <p class="section-desc">逻辑位置相同，各设备绝对路径不同 — 详见 storage-policy.md。</p>
+      <table>
+        <thead>
+          <tr><th>逻辑位置</th><th>Mac（NAS 挂载）</th><th>Windows（示例）</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>活动项目</td>
+            <td><code>/Volumes/home/Drive/00_FileStation</code></td>
+            <td><code>Z:/Drive/00_FileStation</code></td>
+          </tr>
+          <tr>
+            <td>工具箱</td>
+            <td><code>.../ide-toolbox</code></td>
+            <td><code>Z:/Drive/00_FileStation/ide-toolbox</code></td>
+          </tr>
+          <tr>
+            <td>归档</td>
+            <td><code>/Volumes/home/Drive/01_Project Files</code></td>
+            <td><code>Z:/Drive/01_Project Files</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>文档导航</h2>
+      <p class="section-desc">Markdown 文档仍是维护真相源；本页是可视化总览。</p>
+      <div class="docs-grid">
+        <a class="doc-link" href="docs/onboarding.md"><strong>新设备接入</strong><span>Mac / Windows / Mac mini 5 分钟</span></a>
+        <a class="doc-link" href="storage-policy.md"><strong>存储策略</strong><span>群晖 · Mac · Windows 路径对照</span></a>
+        <a class="doc-link" href="automation-playbook.md"><strong>自动化手册</strong><span>./ide 菜单与口令</span></a>
+        <a class="doc-link" href="docs/codex-onboarding.md"><strong>Codex 接入</strong><span>用户规则与自检</span></a>
+        <a class="doc-link" href="docs/architecture.md"><strong>系统架构</strong><span>数据流与设计原则</span></a>
+        <a class="doc-link" href="docs/scripts-reference.md"><strong>脚本参考</strong><span>参数、风险、输出</span></a>
+        <a class="doc-link" href="docs/troubleshooting.md"><strong>故障排查</strong><span>常见问题修复</span></a>
+        <a class="doc-link" href="docs/changelog.md"><strong>变更记录</strong><span>工具箱版本历史</span></a>
+      </div>
+    </section>
+
+    <footer>
+      <p>IDE Toolbox · 维护真相源：<a href="README.md">README.md</a> · GitHub：<a href="https://github.com/Gacenwinl/ide-toolbox">Gacenwinl/ide-toolbox</a></p>
+      <p style="margin-top:8px; opacity:0.75;">在 Finder 中双击本文件，或用浏览器打开 README.html</p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -44,7 +44,9 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 
 - 设备名与设备配置（`macbook` 或 `macmini`）
 - 最近活动项目列表
-- 主菜单数字选项
+- 主菜单（支持 **↑↓ 方向键** 或 **直接输入数字**）
+
+存储路径逻辑见 [storage-policy.md](../storage-policy.md#多端路径对照群晖--mac--windows)。
 
 ### 4. 接手已有项目
 
@@ -138,6 +140,12 @@ cd "/z/Drive/00_FileStation/ide-toolbox"
 
 `private-local` 会自动禁止 GitHub 创建。
 
+## Codex 一次性配置
+
+使用 Codex 的设备请阅读 [docs/codex-onboarding.md](codex-onboarding.md)，将 [docs/codex-user-rule-template.md](codex-user-rule-template.md) 中的用户规则粘贴到 Codex **User Rules**（每台设备一次）。
+
+`./ide` 主菜单 → **Codex 接入与用户规则** 可查看完整说明与可复制正文。
+
 ## 接入完成检查清单
 
 - [ ] `./scripts/check-device.sh` 无关键 ERROR
@@ -145,6 +153,7 @@ cd "/z/Drive/00_FileStation/ide-toolbox"
 - [ ] 能对一个已有项目做体检
 - [ ] 能登记当前设备到 `docs/devices.md`
 - [ ] 知道活动目录与归档目录位置
+- [ ] （Codex）用户规则已按模板配置
 - [ ] （可选）`gh auth login` 完成
 
 ## 下一步
