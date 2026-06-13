@@ -30,6 +30,7 @@ Captured at: 2026-06-14
 - [x] `docs/ai-context.md` 复利与接手状态已写回
 - [x] `session-handoff.sh` + 业务项目模板会话结束纪律
 - [x] 验证项目 `260614-agent-wire-test`（suggested-assets 有 2 条）
+- [x] 稳定性收敛审计：菜单文档与主流程一致；修复备用 dispatch 映射；修复 `project-health.sh` 错误函数名
 
 ### 待另端 / 用户
 
@@ -44,6 +45,7 @@ cd ide-toolbox
 ./scripts/check-device.sh
 ./scripts/query-agent-assets.sh --task "ide-toolbox 接手"
 ./scripts/project-health.sh ../260614-agent-wire-test
+./scripts/project-health.sh .
 # 接手测试：只读 AGENTS.md + docs/ai-context.md，不应需要本聊天
 ```
 
@@ -55,3 +57,5 @@ cd ide-toolbox
 ## Suggested Commit Message
 
 `docs(ide): complete handoff memory and session-handoff for all projects`
+
+`fix(ide): align menu dispatch and health warning path`

@@ -367,20 +367,21 @@ run_main_choice() {
     4) action_health ;;
     5) action_upgrade ;;
     6) action_capture ;;
-    7) action_register_device ;;
-    8) action_batch_upgrade ;;
-    9) action_check_device ;;
-    10) action_github_check ;;
-    11) action_archive_preview ;;
-    12) action_archive_execute ;;
-    13) action_show_index ;;
-    14) action_show_storage_policy ;;
-    15) action_query_agent_library ;;
-    16) action_promote_agent_asset ;;
-    17) action_init_agent_library ;;
-    18) action_change_path ;;
-    19) action_show_codex_setup ;;
-    20|0|q|Q) exit 0 ;;
+    7) action_session_handoff ;;
+    8) action_register_device ;;
+    9) action_batch_upgrade ;;
+    10) action_check_device ;;
+    11) action_github_check ;;
+    12) action_archive_preview ;;
+    13) action_archive_execute ;;
+    14) action_show_index ;;
+    15) action_show_storage_policy ;;
+    16) action_query_agent_library ;;
+    17) action_promote_agent_asset ;;
+    18) action_init_agent_library ;;
+    19) action_change_path ;;
+    20) action_show_codex_setup ;;
+    21|0|q|Q) exit 0 ;;
     *) warn "无效选项: $1" ;;
   esac
 }

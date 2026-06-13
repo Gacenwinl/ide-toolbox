@@ -2,6 +2,20 @@
 
 ide-toolbox 工具箱自身变更，不是业务项目 changelog。
 
+## 2026-06-14 — 稳定性收敛审计
+
+### 修复
+
+- `scripts/ide.sh`：同步备用 `run_main_choice` 编号映射，避免与真实主菜单漂移
+- `scripts/project-health.sh`：修复 05 不可达分支中错误的 `handoff_warn` 调用
+
+### 验证
+
+- `bash -n scripts/*.sh`
+- `./scripts/check-device.sh`
+- `./scripts/session-handoff.sh . --dry-run`
+- `./scripts/project-health.sh .`
+
 ## 2026-06-14 — 移交记忆收口 + session-handoff（全项目）
 
 ### 新增

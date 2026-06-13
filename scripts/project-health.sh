@@ -112,7 +112,7 @@ else
       report_warn "缺少 manifest: $manifest"
     fi
   else
-    handoff_warn "05_Agent-Library 不可达（可运行 init-agent-library.sh）"
+    report_warn "05_Agent-Library 不可达（可运行 init-agent-library.sh）"
   fi
   if [[ -f "${TARGET_DIR}/docs/ai-context.md" ]]; then
     if grep -q "待填写" "${TARGET_DIR}/docs/ai-context.md" 2>/dev/null; then
