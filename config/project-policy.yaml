@@ -1,0 +1,101 @@
+# ide-toolbox 项目策略配置
+
+paths:
+  toolbox: "/Volumes/home/Drive/00_FileStation/ide-toolbox"
+  toolbox_cursor_sync: "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
+  active_projects: "/Volumes/home/Drive/00_FileStation"
+  active_projects_cursor_sync: "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation"
+  archive_projects: "/Volumes/home/Drive/01_Project Files"
+  resources: "/Volumes/home/Drive/02_Resources Files"
+  study: "/Volumes/home/Drive/03_Study Files"
+  template_dir: "templates/ai-project"
+
+devices:
+  macbook:
+    shell: bash
+    active_projects: "/Volumes/home/Drive/00_FileStation"
+    toolbox: "/Volumes/home/Drive/00_FileStation/ide-toolbox"
+  windows:
+    shell: git-bash
+    active_projects: "待填写 Windows 映射盘路径"
+    toolbox: "待填写 Windows 映射盘路径/ide-toolbox"
+  macmini:
+    shell: bash
+    active_projects: "/Volumes/home/Drive/00_FileStation"
+    toolbox: "/Volumes/home/Drive/00_FileStation/ide-toolbox"
+
+naming:
+  pattern: "YYMMDD-slug"
+  examples:
+    - "260614-cursor-codex-workflow"
+    - "260620-schengen-visa"
+  slug_rules:
+    - "优先使用英文小写和连字符"
+    - "中文项目可保留中文名，但代码项目建议英文 slug"
+
+project_types:
+  - code
+  - docs
+  - knowledge
+  - automation
+  - notion-sync
+
+templates:
+  ai-project: "templates/ai-project"
+  notion-project: "templates/notion-project"
+
+privacy_profiles:
+  code:
+    github_default: optional_private
+    description: "普通代码/自动化项目，可选 GitHub private"
+  knowledge:
+    github_default: none
+    description: "知识库项目，默认不上 GitHub，谨慎 push"
+  private-local:
+    github_default: forbidden
+    description: "求职/签证/证件类，仅本地与 NAS，禁止 GitHub"
+  automation:
+    github_default: optional_private
+    description: "脚本/工具项目，可选 GitHub private"
+
+github:
+  default_visibility: none
+  require_gh_cli: true
+  default_push: false
+  require_confirmation: true
+  auto_commit_on_new_project: true
+  commit_message: "chore: initialize AI project scaffold"
+
+git:
+  init_on_new_project: true
+  init_on_upgrade: false
+
+safety:
+  require_confirmation_for:
+    - delete
+    - overwrite
+    - move
+    - archive
+    - github_create
+    - git_push
+    - install_dependencies
+  sensitive_patterns:
+    - ".env"
+    - ".env.*"
+    - "*.pem"
+    - "*.key"
+    - "*secret*"
+    - "*credential*"
+    - "*password*"
+    - "*.p12"
+    - "id_rsa"
+    - "id_ed25519"
+
+archive:
+  default_dry_run: true
+  archive_subdir: "99_归档"
+
+recent_projects:
+  limit: 10
+  exclude:
+    - "ide-toolbox"

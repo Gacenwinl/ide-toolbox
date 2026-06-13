@@ -1,0 +1,23 @@
+# 本地路径 <-> Notion 映射
+version: "1.0"
+last_synced: "{{CREATED_DATE}}"
+project: "{{PROJECT_NAME}}"
+
+notion:
+  hub_url: "{{NOTION_HUB_URL}}"
+  hub_title: "{{NOTION_HUB_TITLE}}"
+
+databases:
+  tasks:
+    local: data/tasks-master.csv
+    notion_url: ""
+    data_source_id: ""
+    title: "主事务库"
+  # 按需追加更多 database 映射
+
+pages:
+  overview:
+    local: docs/project-overview.md
+    notion_url: ""
+    title: "项目总览"
+    canonical: local
