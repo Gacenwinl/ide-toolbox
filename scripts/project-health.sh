@@ -46,7 +46,16 @@ else
   report_warn "尚未初始化 Git"
 fi
 
-if is_notion_project "$TARGET_DIR"; then
+if is_toolbox_project "$TARGET_DIR"; then
+  report_ok "识别为 IDE Toolbox 自身"
+  for file in docs/ai-context.md docs/runbook.md docs/conversation-reuse.md docs/codex-handoff.md docs/devices.md config/project-policy.yaml ide projects-index.md; do
+    if [[ -f "${TARGET_DIR}/${file}" ]]; then
+      report_ok "存在 ${file}"
+    else
+      report_warn "缺少 ${file}"
+    fi
+  done
+elif is_notion_project "$TARGET_DIR"; then
   report_ok "识别为 Notion 维护项目"
   for file in manifest.yaml NOTION_INDEX.md docs/notion-sync-policy.md docs/HANDOFF.md data/tasks-master.csv; do
     if [[ -f "${TARGET_DIR}/${file}" ]]; then

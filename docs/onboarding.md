@@ -43,8 +43,9 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 应看到：
 
 - 设备名与设备配置（`macbook` 或 `macmini`）
-- 最近活动项目列表
-- 主菜单（支持 **↑↓ 方向键** 或 **直接输入数字**）
+- 最近活动项目（最多 5 个、一周内）
+- 主菜单：**1–10 快速打开 · 11+ 其他操作**
+- 支持 **↑↓ / jk**、**数字 + 回车**（如 `11`+回车新建项目）
 
 存储路径逻辑见 [storage-policy.md](../storage-policy.md#多端路径对照群晖--mac--windows)。
 
@@ -66,36 +67,33 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 # 安装 gh 后（需你确认安装）
 gh auth login
 ./ide
-# 主菜单 → 检查 GitHub 就绪情况
+# 19) 检查 GitHub 就绪情况（菜单编号 19）
 ```
 
 ## Windows（Git Bash）
 
-### 1. 填写设备路径
+### 1. 确认设备路径
 
-编辑 `config/project-policy.yaml`：
+`config/project-policy.yaml` 已配置 Synology Drive 同步路径（`00_FileStation` → 本机 `SynologyDrive` 目录）：
 
 ```yaml
 devices:
   windows:
     shell: git-bash
-    active_projects: "你的映射盘路径/00_FileStation"
-    toolbox: "你的映射盘路径/00_FileStation/ide-toolbox"
+    active_projects: "C:/Users/13555/SynologyDrive"
+    toolbox: "C:/Users/13555/SynologyDrive/ide-toolbox"
 ```
 
-示例（按你实际盘符修改）：
-
-```yaml
-active_projects: "Z:/Drive/00_FileStation"
-toolbox: "Z:/Drive/00_FileStation/ide-toolbox"
-```
+若你换了 Windows 用户名或同步目录，只需改上述两项。
 
 ### 2. 打开 Git Bash 并进入工具箱
 
 ```bash
-cd "/z/Drive/00_FileStation/ide-toolbox"
+cd "C:/Users/13555/SynologyDrive/ide-toolbox"
 ./ide
 ```
+
+> Git Bash 里也接受 `/c/Users/13555/...` 写法，与上面等价；配置和脚本已统一为 `C:/Users/...`。
 
 ### 3. 设备接入检查
 
@@ -117,7 +115,7 @@ cd "/z/Drive/00_FileStation/ide-toolbox"
 
 ```bash
 ./ide
-# 2) 新建多端 AI 项目
+# 11) 新建多端 AI 项目
 ```
 
 或：
@@ -144,7 +142,7 @@ cd "/z/Drive/00_FileStation/ide-toolbox"
 
 使用 Codex 的设备请阅读 [docs/codex-onboarding.md](codex-onboarding.md)，将 [docs/codex-user-rule-template.md](codex-user-rule-template.md) 中的用户规则粘贴到 Codex **User Rules**（每台设备一次）。
 
-`./ide` 主菜单 → **Codex 接入与用户规则** 可查看完整说明与可复制正文。
+`./ide` 主菜单 **25) Codex 接入与用户规则** 可查看完整说明与可复制正文。
 
 ## 接入完成检查清单
 

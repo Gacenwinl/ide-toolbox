@@ -60,9 +60,9 @@
 
 | 逻辑位置 | MacBook / Mac mini（NAS 挂载） | MacBook（Synology Drive 同步） | Windows（Git Bash，示例） |
 |---|---|---|---|
-| 活动项目区 | `/Volumes/home/Drive/00_FileStation` | `~/Library/CloudStorage/SynologyDrive-FileStation` | `Z:/Drive/00_FileStation`（待你填写） |
-| 工具箱 | `/Volumes/home/Drive/00_FileStation/ide-toolbox` | `~/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox` | `Z:/Drive/00_FileStation/ide-toolbox` |
-| 归档区 | `/Volumes/home/Drive/01_Project Files` | `~/Library/CloudStorage/SynologyDrive-FileStation/../01_Project Files`* | `Z:/Drive/01_Project Files` |
+| 活动项目区 | `/Volumes/home/Drive/00_FileStation` | `~/Library/CloudStorage/SynologyDrive-FileStation` | `C:/Users/13555/SynologyDrive`（Synology Drive 同步） |
+| 工具箱 | `/Volumes/home/Drive/00_FileStation/ide-toolbox` | `~/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox` | `C:/Users/13555/SynologyDrive/ide-toolbox` |
+| 归档区 | `/Volumes/home/Drive/01_Project Files` | `~/Library/CloudStorage/SynologyDrive-FileStation/../01_Project Files`* | 归档区未同步到本机时，需 NAS 挂载或手动访问 |
 
 \* Mac 上 Synology Drive 同步目录通常只同步 `00_FileStation` 等工作区；归档区更常用 NAS 挂载路径访问。以你 NAS 实际同步范围为准。
 
@@ -84,18 +84,25 @@
 ### Windows 说明
 
 - 统一使用 **Git Bash**，不做 PowerShell 版
-- 在 `config/project-policy.yaml` → `devices.windows` 填写映射盘路径
-- 映射盘符取决于你在 Windows 上如何挂载群晖共享文件夹（常见 `Z:`，以实际为准）
+- 本机 `00_FileStation` 通过 **Synology Drive 客户端** 同步到 `C:\Users\13555\SynologyDrive`（与 Mac 的 Drive 同步目录同类，不是 SMB 映射盘）
+- 路径已写入 `config/project-policy.yaml` → `devices.windows`
 
 ```yaml
 devices:
   windows:
     shell: git-bash
-    active_projects: "Z:/Drive/00_FileStation"
-    toolbox: "Z:/Drive/00_FileStation/ide-toolbox"
+    active_projects: "C:/Users/13555/SynologyDrive"
+    toolbox: "C:/Users/13555/SynologyDrive/ide-toolbox"
 ```
 
-Git Bash 内路径写法示例：`cd "/z/Drive/00_FileStation/ide-toolbox"`
+Git Bash 内进入工具箱（与 `project-policy.yaml` 同一写法，`C:/` 与 `/c/` 在 Git Bash 中等价，本项目统一用 `C:/`）：
+
+```bash
+cd "C:/Users/13555/SynologyDrive/ide-toolbox"
+./ide
+```
+
+若改用 NAS 映射盘（如 `Z:`），只需改 `devices.windows` 中对应路径。
 
 ### 同步 vs Git 的分工
 

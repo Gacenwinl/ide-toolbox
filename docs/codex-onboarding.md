@@ -31,7 +31,7 @@ sed -n '/## 可复制正文（开始）/,/## 可复制正文（结束）/p' docs
 
 - Mac NAS 挂载：`/Volumes/home/Drive/00_FileStation/...`
 - Mac Drive 同步：`~/Library/CloudStorage/SynologyDrive-FileStation/...`
-- Windows Git Bash：在 `config/project-policy.yaml` 填写映射盘路径
+- Windows Git Bash：`C:/Users/13555/SynologyDrive/...`（Synology Drive 同步，见 `config/project-policy.yaml`）
 
 详见 [storage-policy.md](../storage-policy.md#多端路径对照群晖--mac--windows)。
 
@@ -72,7 +72,7 @@ cd "/Volumes/home/Drive/00_FileStation/ide-toolbox"
 
 ```bash
 ./ide /path/to/project
-# 6) 沉淀对话记忆
+# 3) 沉淀对话记忆（已选项目后的项目菜单）
 ```
 
 或对 Codex 说：「把当前对话沉淀成项目记忆」。

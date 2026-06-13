@@ -34,8 +34,8 @@
 
 **处理**
 
-- 直接运行 `./ide`，用菜单 `1` 从最近项目选择
-- 或手动输入无引号路径
+- 直接运行 `./ide`，输入 `1`–`10` + 回车快速打开最近项目
+- 或手动输入无引号路径：`./ide /path/to/project`
 
 ---
 
@@ -180,11 +180,42 @@ bash ./scripts/check-device.sh
 
 - 活动目录为空或不可达
 - 只有 `ide-toolbox` 一个目录
+- 其他项目 **7 天内无目录活动**（`recent_projects.max_age_days`）
 
 **处理**
 
 - 检查 `resolve_active_dir` 返回值
 - 确认 `00_FileStation` 下有其他项目目录
+- 需要放宽筛选时，编辑 `config/project-policy.yaml` → `recent_projects.max_age_days`
+
+### 输入编号无对应项目（如选 6 但只有 3 个）
+
+**说明**
+
+快速打开固定占用 **1–10**，最近项目最多显示 **5** 个。空槽位会提示，不会退出程序。
+
+### 无效选项（空）
+
+**原因**
+
+- 旧版菜单 stdout 污染（已修复：UI 走 stderr）
+- 非 TTY 环境未设置 `IDE_MENU_PLAIN=1`
+
+**处理**
+
+```bash
+IDE_MENU_PLAIN=1 ./ide
+```
+
+### 方向键在 Cursor 终端不灵
+
+**处理**
+
+```bash
+IDE_MENU_PLAIN=1 ./ide
+```
+
+或在本机 Terminal / iTerm 中运行 `./ide`。多数字编号（如 `11`）需 **数字 + 回车**。
 
 ---
 

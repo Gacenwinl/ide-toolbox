@@ -2,6 +2,66 @@
 
 ide-toolbox 工具箱自身变更，不是业务项目 changelog。
 
+## 2026-06-13 — 文档全量同步（菜单 1-10/11+、Windows 路径）
+
+### 更新
+
+- `automation-playbook.md`、`docs/maintenance.md`、`docs/architecture.md`、`docs/troubleshooting.md`
+- `docs/onboarding.md`、`README.md`、`README.html`
+- `projects-index.md` 移除 `_示例_` 占位行
+- `docs/maintenance.md` 文档清单增加 `README.html`
+
+## 2026-06-13 — Windows Synology Drive 同步路径
+
+### 配置
+
+- `devices.windows`：`C:/Users/13555/SynologyDrive`（00 活动区同步根目录）
+- `paths.active_projects_windows_sync` / `toolbox_windows_sync` 同步记录
+- 更新 `storage-policy.md`、`docs/onboarding.md` 中的 Windows 示例
+
+## 2026-06-13 — 最近项目限 5 + 固定编号 1-10 / 11+
+
+### 变更
+
+- 最近项目最多 **5 个**，且仅显示 **7 天内**有目录活动的项目（`recent_projects.max_age_days`）
+- 主菜单编号固定：**1–10** 快速打开，**11+** 功能项（`[11]` 标签显示）
+- `interactive-menu.py` 按显示编号提交（输入 `11` 可正确匹配功能项）
+- 空槽位（如选 6 但仅 3 个项目）友好提示，不退出程序
+
+### 修复
+
+- 补全 `read_recent_policy_value`；`show_path_menu` 缺失导致已选项目时崩溃
+
+## 2026-06-13 — 合一主菜单 + stdout 修复
+
+### 修复
+
+- Python 菜单 UI 改 stderr，修复「无效选项（空）」
+- **1–10 直接打开最近项目**，11+ 为其他操作（去掉重复的「从最近项目选择」）
+
+## 2026-06-13 — 交互菜单改用 Python3
+
+### 修复
+
+- 删除不可靠的 Bash 方向键实现
+- 新增 `scripts/interactive-menu.py`（termios，支持 ↑↓ / jk / 数字+回车）
+- 失败时自动回退 `plain_menu_select`；`IDE_MENU_PLAIN=1` 强制纯数字
+
+## 2026-06-13 — 菜单修复 + 工具箱自身文档补齐
+
+### 修复
+
+- `interactive_menu_select`：`stty min 1` 修复方向键；数字需**回车确认**方可输入 10、11 等
+
+### 新增
+
+- `docs/ai-context.md`、`docs/runbook.md`、`docs/devices.md`、`docs/codex-handoff.md`、`docs/conversation-reuse.md`（工具箱自身）
+
+### 更新
+
+- `project-health.sh` 识别 IDE Toolbox 自身检查项
+- `AGENTS.md`、`docs/scripts-reference.md`
+
 ## 2026-06-13 — 可视化 README.html
 
 ### 新增

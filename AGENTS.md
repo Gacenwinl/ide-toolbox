@@ -7,11 +7,13 @@
 ## 会话启动
 
 1. [README.md](README.md)
-2. [docs/README.md](docs/README.md)
-3. [storage-policy.md](storage-policy.md)
-4. [automation-playbook.md](automation-playbook.md)
-5. [config/project-policy.yaml](config/project-policy.yaml)
-6. [projects-index.md](projects-index.md)
+2. [docs/ai-context.md](docs/ai-context.md)
+3. [docs/runbook.md](docs/runbook.md)
+4. [docs/README.md](docs/README.md)
+5. [storage-policy.md](storage-policy.md)
+6. [automation-playbook.md](automation-playbook.md)
+7. [config/project-policy.yaml](config/project-policy.yaml)
+8. [projects-index.md](projects-index.md)
 
 按需深入：
 

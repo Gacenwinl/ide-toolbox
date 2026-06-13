@@ -5,6 +5,8 @@ paths:
   toolbox_cursor_sync: "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
   active_projects: "/Volumes/home/Drive/00_FileStation"
   active_projects_cursor_sync: "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation"
+  active_projects_windows_sync: "C:/Users/13555/SynologyDrive"
+  toolbox_windows_sync: "C:/Users/13555/SynologyDrive/ide-toolbox"
   archive_projects: "/Volumes/home/Drive/01_Project Files"
   resources: "/Volumes/home/Drive/02_Resources Files"
   study: "/Volumes/home/Drive/03_Study Files"
@@ -17,8 +19,8 @@ devices:
     toolbox: "/Volumes/home/Drive/00_FileStation/ide-toolbox"
   windows:
     shell: git-bash
-    active_projects: "待填写 Windows 映射盘路径"
-    toolbox: "待填写 Windows 映射盘路径/ide-toolbox"
+    active_projects: "C:/Users/13555/SynologyDrive"
+    toolbox: "C:/Users/13555/SynologyDrive/ide-toolbox"
   macmini:
     shell: bash
     active_projects: "/Volumes/home/Drive/00_FileStation"
@@ -96,6 +98,9 @@ archive:
   archive_subdir: "99_归档"
 
 recent_projects:
-  limit: 10
+  limit: 5
+  max_age_days: 7
+  quick_open_slots: 10
+  function_menu_start: 11
   exclude:
     - "ide-toolbox"

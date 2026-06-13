@@ -210,16 +210,72 @@ action_change_path() { prompt_path; }
 
 show_main_menu() {
   print_header
-  printf '\n最近活动项目:\n'
-  print_recent_projects
 }
 
 show_path_menu() {
   print_header
 }
 
-read_main_menu_choice() {
-  interactive_menu_select "主菜单:" "${MAIN_MENU_ITEMS[@]}"
+build_home_menu_options() {
+  HOME_MENU_OPTIONS=()
+  list_recent_projects
+  HOME_RECENT_COUNT="${#RECENT_PROJECT_PATHS[@]}"
+  local path slot=1 func_slot=11 item
+  for path in "${RECENT_PROJECT_PATHS[@]}"; do
+    HOME_MENU_OPTIONS+=("[${slot}] 打开: $(basename "$path")")
+    slot=$((slot + 1))
+  done
+  for item in "${MAIN_MENU_ITEMS[@]:1}"; do
+    HOME_MENU_OPTIONS+=("[${func_slot}] ${item}")
+    func_slot=$((func_slot + 1))
+  done
+}
+
+home_menu_title() {
+  printf '菜单 (1-10 快速打开最近项目 · 11+ 其他操作):'
+}
+
+dispatch_home_choice() {
+  local choice main_idx
+  build_home_menu_options
+  [[ "${#HOME_MENU_OPTIONS[@]}" -gt 0 ]] || die "菜单为空"
+
+  choice="$(interactive_menu_select "$(home_menu_title)" "${HOME_MENU_OPTIONS[@]}")"
+  choice="$(sanitize_menu_choice "$choice")"
+  [[ -n "$choice" ]] || { warn "无效选项（空）"; return 1; }
+  [[ "$choice" != "0" ]] || exit 0
+
+  if (( choice >= 1 && choice <= 10 )); then
+    list_recent_projects
+    if (( choice > ${#RECENT_PROJECT_PATHS[@]} )); then
+      warn "编号 ${choice} 无对应项目（当前 ${#RECENT_PROJECT_PATHS[@]} 个一周内最近项目，快速打开为 1-10）"
+      return 1
+    fi
+    TARGET_PATH="${RECENT_PROJECT_PATHS[$((choice - 1))]}"
+    log "已打开: $TARGET_PATH"
+    return 0
+  fi
+
+  main_idx=$((choice - 10 + 1))
+  case "$main_idx" in
+    2) action_new_project ;;
+    3) action_new_notion_project ;;
+    4) action_health ;;
+    5) action_upgrade ;;
+    6) action_capture ;;
+    7) action_register_device ;;
+    8) action_batch_upgrade ;;
+    9) action_check_device ;;
+    10) action_github_check ;;
+    11) action_archive_preview ;;
+    12) action_archive_execute ;;
+    13) action_show_index ;;
+    14) action_show_storage_policy ;;
+    15) action_change_path ;;
+    16) action_show_codex_setup ;;
+    17) exit 0 ;;
+    *) warn "无效选项: $choice"; return 1 ;;
+  esac
 }
 
 read_path_menu_choice() {
@@ -267,18 +323,21 @@ run_path_choice() {
 }
 
 main_loop() {
-  local choice rc
+  local choice rc=0
   while true; do
     if [[ -n "$TARGET_PATH" && -d "$TARGET_PATH" ]]; then
       show_path_menu
       choice="$(read_path_menu_choice)"
       run_path_choice "$choice"
+      rc=$?
     else
       show_main_menu
-      choice="$(read_main_menu_choice)"
-      run_main_choice "$choice"
+      dispatch_home_choice
+      rc=$?
+      if [[ "$rc" -eq 1 ]]; then
+        continue
+      fi
     fi
-    rc=$?
     if [[ "$rc" -eq 2 ]]; then
       TARGET_PATH=""
       continue

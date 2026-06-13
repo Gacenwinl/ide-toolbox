@@ -48,6 +48,29 @@ read_device_policy_value() {
   ' "$POLICY_FILE"
 }
 
+read_recent_policy_value() {
+  local key="$1"
+  local default="${2:-}"
+  if [[ ! -f "$POLICY_FILE" ]]; then
+    echo "$default"
+    return
+  fi
+  awk -v key="$key" -v default="$default" '
+    /^recent_projects:/ { in_section=1; next }
+    in_section && /^[A-Za-z]/ && $0 !~ /^  / { in_section=0 }
+    in_section && $0 ~ "^  " key ":" {
+      line=$0
+      sub(/^[^:]*:[ ]*"?/, "", line)
+      sub(/".*$/, "", line)
+      gsub(/[[:space:]]+$/, "", line)
+      print line
+      found=1
+      exit
+    }
+    END { if (!found) print default }
+  ' "$POLICY_FILE"
+}
+
 detect_device_profile() {
   if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
     echo "windows"
@@ -101,14 +124,29 @@ resolve_archive_dir() {
 }
 
 list_recent_projects() {
-  local active_dir limit exclude name path mtime
+  local active_dir limit max_age_days cutoff now name path mtime
   active_dir="$(resolve_active_dir)"
-  limit="$(read_policy_value "limit" "10")"
+  limit="$(read_recent_policy_value "limit" "5")"
+  max_age_days="$(read_recent_policy_value "max_age_days" "7")"
+  now="$(date +%s)"
+  if [[ "$max_age_days" =~ ^[0-9]+$ ]] && (( max_age_days > 0 )); then
+    cutoff=$((now - max_age_days * 86400))
+  else
+    cutoff=0
+  fi
   RECENT_PROJECT_PATHS=()
   while IFS= read -r path; do
     name="$(basename "$path")"
     [[ "$name" == "ide-toolbox" ]] && continue
     [[ "$name" == .* ]] && continue
+    if (( cutoff > 0 )); then
+      if stat -f "%m" "$path" >/dev/null 2>&1; then
+        mtime="$(stat -f "%m" "$path")"
+      else
+        mtime="$(stat -c "%Y" "$path")"
+      fi
+      (( mtime >= cutoff )) || continue
+    fi
     RECENT_PROJECT_PATHS+=("$path")
     [[ "${#RECENT_PROJECT_PATHS[@]}" -ge "$limit" ]] && break
   done < <(
@@ -141,8 +179,11 @@ print_recent_projects() {
 select_recent_project() {
   local choice="$1"
   list_recent_projects
-  if [[ "$choice" -lt 1 || "$choice" -gt "${#RECENT_PROJECT_PATHS[@]}" ]]; then
-    die "无效项目编号: $choice"
+  if (( choice < 1 || choice > 10 )); then
+    die "无效项目编号: $choice（快速打开为 1-10）"
+  fi
+  if (( choice > ${#RECENT_PROJECT_PATHS[@]} )); then
+    die "编号 ${choice} 无对应项目（当前仅 ${#RECENT_PROJECT_PATHS[@]} 个最近项目）"
   fi
   printf '%s' "${RECENT_PROJECT_PATHS[$((choice - 1))]}"
 }
@@ -300,10 +341,16 @@ plain_menu_select() {
   local title="$1"
   shift
   local options=("$@")
-  local i=1 choice
+  local i=0 slot=0 label="" choice
   printf '\n%s\n' "$title" >&2
   for opt in "${options[@]}"; do
-    printf '  %2d) %s\n' "$i" "$opt" >&2
+    slot=$((i + 1))
+    label="$opt"
+    if [[ "$opt" =~ ^\[([0-9]+)\][[:space:]]*(.*)$ ]]; then
+      slot="${BASH_REMATCH[1]}"
+      label="${BASH_REMATCH[2]}"
+    fi
+    printf '  %2d) %s\n' "$slot" "$label" >&2
     i=$((i + 1))
   done
   if [[ -r /dev/tty ]]; then
@@ -314,105 +361,41 @@ plain_menu_select() {
   printf '%s' "$choice"
 }
 
+is_toolbox_project() {
+  local dir="$1"
+  [[ "$(cd "$dir" 2>/dev/null && pwd -P)" == "$(cd "$TOOLBOX_ROOT" 2>/dev/null && pwd -P)" ]]
+}
+
+sanitize_menu_choice() {
+  local raw="$1"
+  raw="${raw//$'\r'/}"
+  raw="${raw//$'\n'/}"
+  raw="$(printf '%s' "$raw" | tr -cd '0-9')"
+  printf '%s' "$raw"
+}
+
 interactive_menu_select() {
   local title="$1"
   shift
   local options=("$@")
-  local count=${#options[@]}
-  local selected=0
-  local key seq num key2
-  local menu_lines=0
-  local stty_save=""
+  local py="${TOOLBOX_ROOT}/scripts/interactive-menu.py"
+  local choice=""
 
-  [[ "$count" -gt 0 ]] || die "菜单为空"
+  [[ "${#options[@]}" -gt 0 ]] || die "菜单为空"
 
-  if [[ ! -t 0 ]] || [[ "${IDE_MENU_PLAIN:-}" == "1" ]] || [[ ! -w /dev/tty ]]; then
+  if [[ "${IDE_MENU_PLAIN:-}" == "1" ]] || [[ ! -t 0 ]]; then
     plain_menu_select "$title" "${options[@]}"
     return 0
   fi
 
-  stty_save="$(stty -g </dev/tty 2>/dev/null || true)"
-  if [[ -z "$stty_save" ]]; then
-    plain_menu_select "$title" "${options[@]}"
-    return 0
-  fi
-
-  cleanup_menu_tty() {
-    stty "$stty_save" </dev/tty 2>/dev/null || stty sane </dev/tty 2>/dev/null || true
-  }
-
-  draw_menu() {
-    local s="$1"
-    local i
-    if [[ "$menu_lines" -gt 0 ]]; then
-      printf '\033[%dA\033[J' "$menu_lines" >/dev/tty
-    fi
-    menu_lines=$((count + 3))
-    {
-      printf '\n%s\n' "$title"
-      for i in "${!options[@]}"; do
-        if [[ "$i" -eq "$s" ]]; then
-          printf ' \033[7m %2d) %s \033[0m\n' "$((i + 1))" "${options[$i]}"
-        else
-          printf '   %2d) %s\n' "$((i + 1))" "${options[$i]}"
-        fi
-      done
-      printf ' (↑↓ 移动 · 回车确认 · 数字直达 · 0 退出)\n'
-    } >/dev/tty
-  }
-
-  finish_menu() {
-    local result="$1"
-    cleanup_menu_tty
-    trap - EXIT INT TERM
-    printf '%s' "$result"
-  }
-
-  trap 'cleanup_menu_tty' EXIT INT TERM
-  stty -echo -icanon time 0 min 0 </dev/tty 2>/dev/null || {
-    cleanup_menu_tty
-    trap - EXIT INT TERM
-    plain_menu_select "$title" "${options[@]}"
-    return 0
-  }
-
-  draw_menu "$selected"
-  while true; do
-    if ! IFS= read -rsn1 key </dev/tty; then
-      finish_menu "0"
+  if command -v python3 >/dev/null 2>&1 && [[ -f "$py" ]]; then
+    choice="$(python3 "$py" "$title" "${options[@]}" 2>/dev/tty)" || choice=""
+    choice="$(sanitize_menu_choice "$choice")"
+    if [[ -n "$choice" ]]; then
+      printf '%s' "$choice"
       return 0
     fi
-    case "$key" in
-      '')
-        finish_menu "$((selected + 1))"
-        return 0
-        ;;
-      $'\x1b')
-        if IFS= read -rsn2 -t 0.05 seq </dev/tty 2>/dev/null; then
-          case "$seq" in
-            '[A'|'OA') selected=$(( (selected - 1 + count) % count )); draw_menu "$selected" ;;
-            '[B'|'OB') selected=$(( (selected + 1) % count )); draw_menu "$selected" ;;
-          esac
-        fi
-        ;;
-      [0-9])
-        num="$key"
-        if IFS= read -rsn1 -t 0.35 key2 </dev/tty 2>/dev/null && [[ "$key2" =~ ^[0-9]$ ]]; then
-          num="${num}${key2}"
-        fi
-        if [[ "$num" == "0" ]]; then
-          finish_menu "0"
-          return 0
-        fi
-        if [[ "$num" =~ ^[0-9]+$ ]] && (( num >= 1 && num <= count )); then
-          finish_menu "$num"
-          return 0
-        fi
-        ;;
-      q|Q)
-        finish_menu "0"
-        return 0
-        ;;
-    esac
-  done
+  fi
+
+  plain_menu_select "$title" "${options[@]}"
 }

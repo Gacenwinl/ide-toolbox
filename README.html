@@ -345,25 +345,28 @@
       <h1>IDE Toolbox</h1>
       <p class="subtitle">
         不依赖聊天记录的多端 AI 项目工具箱。文件在 NAS，记忆在项目 Markdown，版本在 Git。
-        一个入口 <code>./ide</code>，方向键或数字，开箱长跑。
+        一个入口 <code>./ide</code>：1–10 快速打开 · 11+ 功能 · 数字+回车确认。
       </p>
       <div class="cta-row">
         <a class="btn btn-primary" href="automation-playbook.md">📘 日常操作手册</a>
         <a class="btn btn-ghost" href="docs/onboarding.md">🚀 新设备接入</a>
         <a class="btn btn-ghost" href="docs/codex-onboarding.md">🤖 Codex 配置</a>
-        <a class="btn btn-ghost" href="https://github.com/Gacenwinl/ide-toolbox">GitHub Private</a>
+        <a class="btn btn-ghost" href="https://github.com/Gacenwinl/ide-toolbox">GitHub</a>
       </div>
       <div class="code-hero">
         <div class="code-bar">
           <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
           <span>terminal — ide-toolbox</span>
         </div>
-        <pre><span class="cm"># 进入工具箱</span>
+        <pre><span class="cm"># Mac NAS 挂载</span>
 <span class="kw">cd</span> <span class="str">"/Volumes/home/Drive/00_FileStation/ide-toolbox"</span>
 <span class="kw">./ide</span>
 
-<span class="cm"># 拖入项目路径</span>
-<span class="kw">./ide</span> <span class="str">/Volumes/home/Drive/00_FileStation/你的项目名</span></pre>
+<span class="cm"># Windows Git Bash（Synology Drive 同步）</span>
+<span class="kw">cd</span> <span class="str">"C:/Users/13555/SynologyDrive/ide-toolbox"</span>
+<span class="kw">./ide</span>
+
+<span class="cm"># 菜单：1–10 打开最近项目 · 11 新建 · 数字+回车</span></pre>
       </div>
     </header>
 
@@ -397,7 +400,7 @@
         <div class="card">
           <div class="card-icon">🎛️</div>
           <h3>单一入口 ./ide</h3>
-          <p>最近项目列表、方向键菜单、新建 AI / Notion 项目、体检与归档。</p>
+          <p>1–10 快速打开（≤5、7 天内）· 11+ 新建/体检/归档 · ↑↓/jk 或数字+回车。</p>
         </div>
         <div class="card">
           <div class="card-icon">🧠</div>
@@ -417,7 +420,7 @@
         <div class="card">
           <div class="card-icon">🖥️</div>
           <h3>多端路径</h3>
-          <p>Mac 挂载 / Drive 同步、Windows Git Bash 映射盘，文档已对照。</p>
+          <p>Mac 挂载 / Drive 同步、Windows Synology Drive（C:/Users/…/SynologyDrive），详见 storage-policy。</p>
         </div>
         <div class="card">
           <div class="card-icon">🏃</div>
@@ -460,27 +463,47 @@
     </section>
 
     <section>
+      <h2>./ide 主菜单</h2>
+      <p class="section-desc">合一列表，编号固定；详细见 automation-playbook.md。</p>
+      <table>
+        <thead>
+          <tr><th>编号</th><th>能力</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1–10</td><td>快速打开最近项目（最多 5 个、7 天内有活动）</td></tr>
+          <tr><td>11</td><td>新建多端 AI 项目</td></tr>
+          <tr><td>12</td><td>新建 Notion 维护项目</td></tr>
+          <tr><td>13–21</td><td>体检、升级、沉淀、登记设备、批量升级、设备检查、GitHub、归档</td></tr>
+          <tr><td>22–25</td><td>项目索引、存储策略、更换路径、Codex 接入</td></tr>
+          <tr><td>26 / 0</td><td>退出</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
       <h2>存储路径速查</h2>
       <p class="section-desc">逻辑位置相同，各设备绝对路径不同 — 详见 storage-policy.md。</p>
       <table>
         <thead>
-          <tr><th>逻辑位置</th><th>Mac（NAS 挂载）</th><th>Windows（示例）</th></tr>
+          <tr><th>逻辑位置</th><th>Mac（NAS 挂载）</th><th>Mac（Drive 同步）</th><th>Windows（Synology Drive）</th></tr>
         </thead>
         <tbody>
           <tr>
             <td>活动项目</td>
             <td><code>/Volumes/home/Drive/00_FileStation</code></td>
-            <td><code>Z:/Drive/00_FileStation</code></td>
+            <td><code>~/Library/CloudStorage/SynologyDrive-FileStation</code></td>
+            <td><code>C:/Users/13555/SynologyDrive</code></td>
           </tr>
           <tr>
             <td>工具箱</td>
             <td><code>.../ide-toolbox</code></td>
-            <td><code>Z:/Drive/00_FileStation/ide-toolbox</code></td>
+            <td><code>.../SynologyDrive-FileStation/ide-toolbox</code></td>
+            <td><code>C:/Users/13555/SynologyDrive/ide-toolbox</code></td>
           </tr>
           <tr>
             <td>归档</td>
             <td><code>/Volumes/home/Drive/01_Project Files</code></td>
-            <td><code>Z:/Drive/01_Project Files</code></td>
+            <td colspan="2">通常需 NAS 挂载；Windows 若未同步归档区可能仅 WARN</td>
           </tr>
         </tbody>
       </table>

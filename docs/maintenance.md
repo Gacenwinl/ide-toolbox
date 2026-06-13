@@ -13,14 +13,15 @@
 
 ### 新增 `./ide` 菜单项
 
-1. 在 `scripts/ide.sh` 添加 `action_xxx` 函数
-2. 更新 `show_main_menu` / `show_path_menu`
-3. 更新 `run_main_choice` / `run_path_choice`
-4. 同步 [scripts-reference.md](scripts-reference.md) 和 [automation-playbook.md](../automation-playbook.md)
+1. 在 `scripts/ide.sh` 的 `MAIN_MENU_ITEMS` 追加功能项（`dispatch_home_choice` 中 `main_idx` 从 11 起递增）
+2. 添加 `action_xxx` 函数，并在 `dispatch_home_choice` 的 `case "$main_idx"` 中映射
+3. 若需改快速打开逻辑，改 `build_home_menu_options` / `list_recent_projects`（`lib.sh`）
+4. 交互 UI 在 `scripts/interactive-menu.py`（`[N]` 显示编号）
+5. 同步 [scripts-reference.md](scripts-reference.md)、[automation-playbook.md](../automation-playbook.md)、[README.html](../README.html)
 
 ### 修改新项目模板
 
-编辑 `templates/ai-project/` 下文件：
+编辑 `templates/ai-project/` 或 `templates/notion-project/` 下文件：
 
 | 文件 | 何时改 |
 |---|---|
@@ -79,7 +80,9 @@
 |---|---|
 | `paths.active_projects` | 活动项目根目录 |
 | `paths.archive_projects` | 归档根目录 |
-| `devices.windows.active_projects` | Windows 活动目录 |
+| `devices.windows.active_projects` | Windows 活动目录（Synology Drive 同步根） |
+| `recent_projects.limit` | 最近项目显示上限（默认 5） |
+| `recent_projects.max_age_days` | 最近项目天数筛选（默认 7） |
 | `privacy_profiles.*` | 隐私与 GitHub 策略 |
 | `github.default_visibility` | 默认是否建远程 |
 | `archive.default_dry_run` | 归档是否默认预览 |
@@ -89,6 +92,7 @@
 每次功能变更后，检查是否需更新：
 
 - [ ] README.md
+- [ ] README.html
 - [ ] AGENTS.md
 - [ ] automation-playbook.md
 - [ ] storage-policy.md
@@ -105,7 +109,7 @@
 - 删除本次新增文件
 - 用备份还原被改文件
 
-建议尽快将 `ide-toolbox` 本身初始化为 private GitHub repo，便于跨设备同步和回滚。
+建议将 `ide-toolbox` 本身纳入 GitHub repo，便于跨设备同步和回滚。
 
 ## 建议 commit message
 

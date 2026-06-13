@@ -36,12 +36,12 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 
 ## 核心能力
 
-- `./ide` 单一入口 + 最近项目列表
+- `./ide` 单一入口：**1–10** 快速打开最近项目（≤5、7 天内）· **11+** 功能操作
 - 新建 / 升级 / 体检 / 归档 / 对话沉淀
 - 隐私分级：`private-local` 禁止 GitHub
 - 设备接入检查 + 项目设备登记
 - Codex 用户级规则模板（对齐 Cursor 项目级 rules）
-- Windows 使用 Git Bash（路径见 `config/project-policy.yaml`）
+- Windows：Git Bash + Synology Drive 同步（`C:/Users/13555/SynologyDrive`）
 
 ## 验证
 
