@@ -90,7 +90,13 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 
 它会自动组装项目上下文、查询 Agent Library、生成标准 prompt，并在执行后接入 `project-health.sh` / `session-handoff.sh`。默认不使用 `--force` / `--yolo`；删除、覆盖、权限、密钥、Git push、Notion 大规模结构修改仍需要确认。
 
-根目录快捷入口：`./agent`（等同 `scripts/agent-cli.sh`）。关闭 Cursor IDE 后的完整流程见 [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)。
+根目录快捷入口：`./agent`（等同 `scripts/agent-cli.sh`）。关闭 Cursor IDE 后的完整流程见 [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)；Plan 模式、多轮对话、Subagent 见 [docs/agent-cli-modes-and-subagents.md](docs/agent-cli-modes-and-subagents.md)。
+
+```bash
+./agent chat .                              # 多轮交互（最接近 IDE）
+./agent continue . "补充需求"                # 续上一段 CLI 会话
+./agent milestone . --summary "本段完成了什么"  # 收尾 + 写回验证
+```
 
 ## 项目全生命周期怎么用
 

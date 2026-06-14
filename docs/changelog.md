@@ -2,6 +2,34 @@
 
 ide-toolbox 工具箱自身变更，不是业务项目 changelog。
 
+## 2026-06-14 — 文档同步审计与 HTML 操作教程
+
+### 新增
+
+- `lib.sh` → `audit_doc_sync()`：检查 ai-context「文档同步清单」勾选状态、changelog/README 时间差
+- `config/project-policy.yaml` → `handoff.*` 配置项
+- `README.html` → **操作教程**完整版（#tutorial：〇–十 + 速查卡片；含自我迭代、完全用 Tool、新建项目、菜单速查）
+
+### 更新
+
+- `session-handoff.sh` / `project-health.sh`：接入文档同步审计
+- 项目模板 `ai-context.md`：新增「文档同步清单」节
+- `milestone` prompt：要求勾选文档同步清单
+
+## 2026-06-14 — Agent CLI 多轮对话与写回验证
+
+### 新增
+
+- `agent-cli.sh`：`chat` / `continue` / `resume` 命令（多轮交互与续会话）
+- `milestone` 写回验证：对比 ai-context 指纹 + `--summary` 确定性写入
+- `.cursor/agents/handoff-reviewer.md`：示例子 Agent（只读移交审查）
+- `docs/agent-cli-modes-and-subagents.md`：Plan 模式、Subagent 使用说明
+
+### 更新
+
+- `ide.sh` Agent CLI 菜单增加 chat / continue / milestone --summary
+- milestone prompt 要求必须实际修改 ai-context 文件
+
 ## 2026-06-14 — Agent CLI 自动驾驶入口
 
 ### 新增

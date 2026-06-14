@@ -101,6 +101,11 @@ archive:
   default_dry_run: true
   archive_subdir: "99_归档"
 
+handoff:
+  verify_doc_sync_checklist: true
+  warn_stale_readme_after_changelog_days: 7
+  readme_lag_seconds: 172800
+
 recent_projects:
   limit: 5
   max_age_days: 7
@@ -119,9 +124,12 @@ agent_cli:
   default_provider: "cursor"
   default_model: ""
   default_mode: "plan"
+  chat_default_mode: ""
   allow_execute: false
   allow_trust: true
+  allow_continue: true
   use_worktree: false
   require_clean_git_for_execute: true
   run_health_after_execute: true
   run_handoff_after_execute: true
+  milestone_verify_writeback: true

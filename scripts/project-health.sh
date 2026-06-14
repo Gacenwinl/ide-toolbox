@@ -173,6 +173,8 @@ else
   report_ok "最近修改时间: $(stat -c "%y" "$TARGET_DIR" | cut -d. -f1)"
 fi
 
+audit_doc_sync "$TARGET_DIR" report_ok report_warn
+
 printf '\n总结: OK=%d, WARN=%d\n' "$ok_count" "$warn_count"
 if [[ "$warn_count" -gt 0 ]]; then
   printf '建议: 长跑 Agent 前先处理 WARN 项，或运行升级脚本补齐模板。\n'

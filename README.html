@@ -292,6 +292,72 @@
     .pill-ok { background: rgba(52, 211, 153, 0.15); color: var(--ok); }
     .pill-warn { background: rgba(251, 191, 36, 0.15); color: var(--warn); }
 
+    .tutorial-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tutorial-nav a {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .tutorial-nav a:hover {
+      border-color: rgba(110, 231, 255, 0.45);
+      color: var(--accent);
+    }
+
+    .steps { display: grid; gap: 14px; margin: 20px 0; }
+
+    .step {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 16px;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #041018;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
+
+    .step h3 { font-size: 1.02rem; margin-bottom: 6px; }
+    .step p { color: var(--muted); font-size: 0.92rem; margin-bottom: 8px; }
+
+    .callout {
+      padding: 16px 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(110, 231, 255, 0.25);
+      background: rgba(110, 231, 255, 0.06);
+      margin: 16px 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout strong { color: var(--text); }
+
+    .compare-yes { color: var(--ok); font-weight: 600; }
+    .compare-part { color: var(--warn); font-weight: 600; }
+
     .docs-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -348,9 +414,9 @@
         一个入口 <code>./ide</code>：1–10 快速打开 · 11+ 功能 · 数字+回车确认。
       </p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="automation-playbook.md">📘 日常操作手册</a>
+        <a class="btn btn-primary" href="#tutorial">📖 操作教程（从这里开始）</a>
+        <a class="btn btn-ghost" href="automation-playbook.md">📘 日常操作手册</a>
         <a class="btn btn-ghost" href="docs/onboarding.md">🚀 新设备接入</a>
-        <a class="btn btn-ghost" href="docs/codex-onboarding.md">🤖 Codex 配置</a>
         <a class="btn btn-ghost" href="https://github.com/Gacenwinl/ide-toolbox">GitHub</a>
       </div>
       <div class="code-hero">
@@ -370,6 +436,279 @@
 <span class="kw">./ide</span></pre>
       </div>
     </header>
+
+    <section id="tutorial">
+      <h2>操作教程 — 你只需记住这一套</h2>
+      <p class="section-desc">面向「主要用 Agent 对话、不看 diff」的用法。Tool 解决 IDE 聊天易忘上下文；文件 + 收尾脚本解决「做了东忘了西、忘了文档」。</p>
+
+      <nav class="tutorial-nav">
+        <a href="#t-start">开始前</a>
+        <a href="#t-daily">日常三步</a>
+        <a href="#t-chat">多轮对话</a>
+        <a href="#t-ide-menu">./ide 菜单</a>
+        <a href="#t-new-project">新建项目</a>
+        <a href="#t-doc">防忘文档</a>
+        <a href="#t-compound">跨项目复利</a>
+        <a href="#t-self">自我迭代</a>
+        <a href="#t-main">完全用 Tool</a>
+        <a href="#t-vs-ide">和 IDE 对比</a>
+        <a href="#t-faq">常见问题</a>
+      </nav>
+
+      <div class="callout">
+        <strong>第一性原理：</strong>聊天是临时通道，<code>docs/ai-context.md</code> 是项目记忆，<code>05_Agent-Library</code> 是跨项目图书馆。
+        每次 <code>./agent</code> 会先读文件再回答，不依赖聊天能记多少。
+      </div>
+
+      <h3 id="t-start" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">〇、开始前（一次性）</h3>
+      <table>
+        <thead><tr><th>检查项</th><th>命令 / 说明</th></tr></thead>
+        <tbody>
+          <tr><td>Cursor Agent CLI 可用</td><td><code>cursor agent --help</code></td></tr>
+          <tr><td>设备路径正确</td><td><code>./scripts/check-device.sh</code></td></tr>
+          <tr><td>进入工具箱</td><td>见页首 terminal 代码块（MacBook / Mac mini / Windows 三条路径）</td></tr>
+          <tr><td>菜单能打开</td><td><code>./ide</code></td></tr>
+          <tr><td>Agent 能 dry-run</td><td><code>./agent start . --dry-run</code></td></tr>
+          <tr><td>（可选）要 Agent 改文件</td><td>编辑 <code>config/project-policy.yaml</code> → <code>agent_cli.allow_execute: true</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>Cursor vs Codex：</strong>本教程的 <code>./agent</code> 命令走 <strong>Cursor Agent CLI</strong>（已接入）。
+        Codex 目前读同一批项目文件 + 用户规则，<strong>尚无</strong>对等的 <code>./agent --provider codex</code>。
+      </div>
+
+      <h3 id="t-daily" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">一、日常三步（90% 场景）</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h3>进入工具箱</h3>
+            <p>MacBook 示例（路径因设备而异，见下方「多端路径」）：</p>
+            <pre><span class="kw">cd</span> <span class="str">"/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"</span></pre>
+            <p>交互菜单：<code>./ide</code> · 直达某项目：<code>./ide /path/to/项目</code></p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h3>用 Agent 干活（像 IDE 对话页）</h3>
+            <pre><span class="cm"># 多轮聊天 — 最接近 Cursor IDE Agent 面板</span>
+<span class="kw">./agent chat</span> <span class="str">/path/to/项目</span>
+<span class="kw">./agent chat</span> <span class="str">.</span>              <span class="cm"># 维护 ide-toolbox 自身</span>
+
+<span class="cm"># 续上一段 CLI 会话</span>
+<span class="kw">./agent continue</span> <span class="str">.</span> <span class="str">"补充需求：xxx"</span>
+
+<span class="cm"># 只要方案、不改文件</span>
+<span class="kw">./agent plan</span> <span class="str">.</span> <span class="str">"任务目标"</span>
+
+<span class="cm"># 确认后要改文件（需 config 里 allow_execute: true）</span>
+<span class="kw">./agent run</span> <span class="str">.</span> <span class="str">"实现 xxx"</span> --execute</pre>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h3>阶段结束 — milestone 写回（防遗忘的关键）</h3>
+            <pre><span class="kw">./agent milestone</span> <span class="str">.</span> --summary <span class="str">"本段完成了什么、下一步是什么"</span></pre>
+            <p>会自动：health 预检 → 让 Agent 改 <code>ai-context.md</code> → 验证文件是否真的改了 → 检查文档同步清单。</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="t-chat" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">二、多轮对话怎么选</h3>
+      <table>
+        <thead><tr><th>你想做什么</th><th>命令</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>像 IDE 一样连续聊</td><td><code>./agent chat .</code></td><td>交互 TUI，可多轮追问</td></tr>
+          <tr><td>接着上次终端聊过的</td><td><code>./agent continue .</code></td><td>映射 <code>cursor agent --continue</code></td></tr>
+          <tr><td>只读接手、汇报状态</td><td><code>./agent start .</code></td><td>单轮，强制读 ai-context</td></tr>
+          <tr><td>只读出计划</td><td><code>./agent plan . "…"</code></td><td>默认 Plan 模式，不改文件</td></tr>
+          <tr><td>Plan 模式</td><td>上述 start/plan/run(无 execute)</td><td><span class="compare-yes">✓ 已内置</span></td></tr>
+          <tr><td>Subagent 子 Agent</td><td>在 chat 里说「用 handoff-reviewer 审查」</td><td><span class="compare-part">取决于 Cursor CLI 是否提供 Task 工具</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="t-ide-menu" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">三、./ide 菜单速查（不想记命令时用）</h3>
+      <p class="section-desc">在工具箱目录运行 <code>./ide</code>，或 <code>./ide /path/to/项目</code> 进入项目子菜单。</p>
+      <table>
+        <thead><tr><th>编号</th><th>做什么</th><th>你什么时候用</th></tr></thead>
+        <tbody>
+          <tr><td>1–10</td><td>快速打开最近项目</td><td>继续昨天的工作</td></tr>
+          <tr><td>11</td><td>新建多端 AI 项目</td><td>新业务 / 新脚本 / 新知识库</td></tr>
+          <tr><td>12</td><td>新建 Notion 维护项目</td><td>Notion 双轨同步类</td></tr>
+          <tr><td>13</td><td>项目体检</td><td>长跑 Agent 前</td></tr>
+          <tr><td>14</td><td>升级已有目录</td><td>老项目缺 ai-context 等</td></tr>
+          <tr><td>16</td><td>会话收尾移交检查</td><td>milestone 之后复核</td></tr>
+          <tr><td>25–26</td><td>查资产库 / 晋升到库</td><td>跨项目复利</td></tr>
+          <tr><td>29</td><td>Agent CLI 自动驾驶</td><td>chat / plan / milestone 菜单入口</td></tr>
+        </tbody>
+      </table>
+      <p class="section-desc">项目内菜单：<strong>10) Agent CLI</strong> · 1) 体检 · 3) 沉淀 · 4) 收尾移交</p>
+
+      <h3 id="t-new-project" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">四、新建业务项目（完整步骤）</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h3>创建</h3>
+            <pre><span class="kw">./ide</span>    <span class="cm"># 选 11) 新建多端 AI 项目</span></pre>
+            <p>或让 Agent：<em>「用 ide-toolbox 新建项目 260614-xxx，类型 knowledge，用途 …，隐私 code」</em></p>
+            <p>创建后自动有：<code>AGENTS.md</code> · <code>docs/ai-context.md</code> · <code>docs/suggested-assets.md</code></p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h3>接手（不要直接改文件）</h3>
+            <pre><span class="kw">./agent chat</span> <span class="str">"/path/to/新项目"</span></pre>
+            <p>或口令：<em>「先按 AGENTS.md 接手，说明当前状态和 suggested-assets，不要改文件。」</em></p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h3>干活 → 里程碑 → commit</h3>
+            <pre><span class="kw">./agent plan</span> <span class="str">"/path/to/项目"</span> <span class="str">"本阶段目标"</span>
+<span class="cm"># 确认后（allow_execute: true 且 Git 干净）</span>
+<span class="kw">./agent run</span> <span class="str">"/path/to/项目"</span> <span class="str">"实现 …"</span> --execute
+<span class="kw">./agent milestone</span> <span class="str">"/path/to/项目"</span> --summary <span class="str">"本段完成了什么"</span>
+<span class="kw">git</span> -C <span class="str">"/path/to/项目"</span> add -A <span class="kw">&amp;&amp;</span> <span class="kw">git</span> commit -m <span class="str">"feat: …"</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="t-doc" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">五、防「做了项目忘了 README / 文档」</h3>
+      <p class="section-desc">每个项目的 <code>docs/ai-context.md</code> 里有<strong>文档同步清单</strong>。milestone 后脚本会检查：</p>
+      <table>
+        <thead><tr><th>检查项</th><th>作用</th></tr></thead>
+        <tbody>
+          <tr><td>清单里是否还有 <code>- [ ]</code> 未勾选</td><td>提醒 README / runbook / changelog 是否漏改</td></tr>
+          <tr><td>changelog 新但 README 很旧</td><td>提醒人类总览可能过期</td></tr>
+          <tr><td>ai-context 比 README 新很多</td><td>提醒是否忘记同步 README</td></tr>
+        </tbody>
+      </table>
+      <p class="section-desc" style="margin-top:12px">手动检查：<code>./scripts/session-handoff.sh /path/to/项目</code> 或 <code>./scripts/project-health.sh …</code></p>
+      <div class="callout">
+        <strong>给 AI 的固定口令（里程碑时）：</strong><br>
+        「这是里程碑。更新 ai-context，并勾选文档同步清单里所有适用项；同步 README、runbook、changelog。」
+      </div>
+
+      <h3 id="t-compound" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">六、跨项目知识复利</h3>
+      <table>
+        <thead><tr><th>层级</th><th>放哪</th><th>何时用</th></tr></thead>
+        <tbody>
+          <tr><td>L1 项目记忆</td><td><code>docs/ai-context.md</code></td><td>每次 start/chat/milestone 自动读</td></tr>
+          <tr><td>L2 共享库</td><td><code>05_Agent-Library</code> + manifest</td><td>新建项目自动 <code>suggested-assets.md</code></td></tr>
+          <tr><td>晋升</td><td><code>./ide</code> → 26) 或 promote 脚本</td><td>第二次跨项目仍需要的 SOP 才去敏晋升</td></tr>
+        </tbody>
+      </table>
+      <pre><span class="kw">./scripts/query-agent-assets.sh</span> --task <span class="str">"关键词"</span>
+<span class="kw">./scripts/promote-agent-asset.sh</span> --project <span class="str">"/path"</span> --source <span class="str">"docs/x.md"</span> --id <span class="str">"slug"</span> --title <span class="str">"标题"</span></pre>
+      <div class="callout">
+        <strong>复利纪律：</strong>第一次结论留项目内 ai-context；<strong>第二次</strong>跨项目仍需要的 SOP 才去敏晋升；<code>private-local</code> 永不进共享库。
+      </div>
+
+      <h3 id="t-self" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">七、Tool 自我迭代（用 Tool 维护 Tool 自身）</h3>
+      <p class="section-desc">ide-toolbox 目录里路径用 <code>.</code>。不是无人值守自动进化，而是<strong>你驱动 + milestone 写回 + Git 固化</strong>。</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h3>讨论 / 多轮聊</h3>
+            <pre><span class="kw">cd</span> <span class="str">"…/ide-toolbox"</span>
+<span class="kw">./agent chat</span> <span class="str">.</span> <span class="str">"我想给 tool 加 xxx 能力"</span></pre>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h3>只读方案</h3>
+            <pre><span class="kw">./agent plan</span> <span class="str">.</span> <span class="str">"给出最小改动方案和影响范围"</span></pre>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h3>受控改文件</h3>
+            <p>先在 <code>config/project-policy.yaml</code> 确认 <code>agent_cli.allow_execute: true</code>，且 <code>git status</code> 干净：</p>
+            <pre><span class="kw">./agent run</span> <span class="str">.</span> <span class="str">"实现 xxx"</span> --execute</pre>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <h3>收尾 + 同步 HTML 教程</h3>
+            <pre><span class="kw">./agent milestone</span> <span class="str">.</span> --summary <span class="str">"完成了什么、如何验证、如何回滚"</span>
+<span class="kw">git</span> add -A <span class="kw">&amp;&amp;</span> <span class="kw">git</span> commit -m <span class="str">"feat: …"</span>
+<span class="kw">git</span> push</pre>
+            <p>维护 tool 后若影响用户可见说明，<strong>必须同步本页 README.html</strong> 与 <code>README.md</code>。</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="t-main" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">八、可以完全用 Tool 吗？（对你个人：可以）</h3>
+      <table>
+        <thead><tr><th>场景</th><th>用什么</th><th>是否必须开 IDE 图形界面</th></tr></thead>
+        <tbody>
+          <tr><td>Agent 多轮对话、补需求</td><td><code>./agent chat</code> / <code>continue</code></td><td><span class="compare-yes">不必</span></td></tr>
+          <tr><td>新建 / 体检 / 归档 / 复利</td><td><code>./ide</code></td><td><span class="compare-yes">不必</span></td></tr>
+          <tr><td>维护 ide-toolbox 自身</td><td><code>./agent chat .</code> + milestone</td><td><span class="compare-yes">不必</span></td></tr>
+          <tr><td>看 diff、调试断点、UI 预览</td><td>Cursor IDE</td><td><span class="compare-part">可选备用</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>结论：</strong>你若主要用 Agent 对话、不看 diff，<strong>Tool 可以作为 99% 时间的主入口</strong>；IDE 图形界面降为可选备用，不是日常必需。
+        Tool 接的是 <strong>Cursor Agent CLI</strong>（执行层），不是 IDE 编辑器全套；对你这种用法，差距很小。
+      </div>
+
+      <h3 id="t-vs-ide" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">九、和 Cursor IDE 聊天比，Tool 解决什么</h3>
+      <table>
+        <thead><tr><th>问题</th><th>IDE 纯聊天</th><th>ide-toolbox</th></tr></thead>
+        <tbody>
+          <tr><td>聊长了忘记前文</td><td><span class="compare-part">常见</span></td><td><span class="compare-yes">读 ai-context，不依赖聊天长度</span></td></tr>
+          <tr><td>关 IDE / 隔天继续</td><td><span class="compare-part">弱</span></td><td><span class="compare-yes">文件记忆 + milestone</span></td></tr>
+          <tr><td>做了功能忘了文档</td><td><span class="compare-part">几乎无检查</span></td><td><span class="compare-yes">文档同步清单 + handoff WARN</span></td></tr>
+          <tr><td>跨项目复用经验</td><td><span class="compare-part">弱</span></td><td><span class="compare-yes">Agent Library + suggested-assets</span></td></tr>
+          <tr><td>连续对话体验</td><td><span class="compare-yes">好</span></td><td><span class="compare-yes">chat/continue 同样好</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="t-faq" style="margin-top:28px;margin-bottom:12px;font-size:1.2rem;">十、常见问题</h3>
+      <table>
+        <thead><tr><th>问题</th><th>处理</th></tr></thead>
+        <tbody>
+          <tr><td>run --execute 被拒绝</td><td>① <code>git commit</code> 使工作区干净 ② <code>config/project-policy.yaml</code> → <code>agent_cli.allow_execute: true</code></td></tr>
+          <tr><td>milestone 后 ai-context 没改</td><td>看 WARN；<code>--summary "…"</code> 或再 <code>chat</code> 后 <code>milestone</code></td></tr>
+          <tr><td>handoff / health 有 WARN</td><td>先修 WARN（含文档同步清单未勾选），不要继续开新功能</td></tr>
+          <tr><td>文档同步清单 WARN</td><td>打开 <code>docs/ai-context.md</code>，勾选或更新 README / runbook / changelog</td></tr>
+          <tr><td>不想开 Cursor 图形界面</td><td>全程 <code>./agent chat</code> + <code>./ide</code> + <code>milestone</code></td></tr>
+          <tr><td>隔天继续同一项目</td><td><code>./agent start /path</code> 或 <code>./agent continue /path</code></td></tr>
+          <tr><td>Tool 怎么自我升级</td><td>见上文 <a href="#t-self" style="color:var(--accent)">§七 自我迭代</a></td></tr>
+          <tr><td>详细参数</td><td><a href="docs/scripts-reference.md" style="color:var(--accent)">scripts-reference.md</a> · <a href="docs/agent-cli-modes-and-subagents.md" style="color:var(--accent)">Plan/Subagent</a> · <a href="docs/agent-cli-self-maintenance.md" style="color:var(--accent)">自维护</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:32px;margin-bottom:12px;font-size:1.2rem;">速查卡片（可截图保存）</h3>
+      <pre><span class="cm"># —— 每天 ——</span>
+<span class="kw">./agent chat</span> <span class="str">.</span> 或 <span class="str">/path/to/项目</span>
+<span class="cm"># … 多轮干活 …</span>
+<span class="kw">./agent milestone</span> <span class="str">.</span> --summary <span class="str">"本段完成了什么"</span>
+
+<span class="cm"># —— 菜单 ——</span>
+<span class="kw">./ide</span>
+<span class="kw">./ide</span> <span class="str">/path/to/项目</span>
+
+<span class="cm"># —— 检查 ——</span>
+<span class="kw">./scripts/session-handoff.sh</span> <span class="str">.</span>
+<span class="kw">./scripts/project-health.sh</span> <span class="str">.</span>
+
+<span class="cm"># —— 复利 ——</span>
+<span class="kw">./ide</span> → 25) 查库  ·  26) 晋升
+
+<span class="cm"># —— 改 tool 自身 ——</span>
+<span class="kw">./agent chat</span> <span class="str">.</span>  →  plan  →  run --execute  →  milestone  →  git commit</pre>
+    </section>
 
     <section>
       <h2>四层架构</h2>
@@ -571,23 +910,25 @@
 
     <section>
       <h2>Agent CLI 自动驾驶</h2>
-      <p class="section-desc">不打开 Cursor 图形界面，也能由 ide-toolbox 在命令行里驱动 Cursor Agent。</p>
+      <p class="section-desc">不打开 Cursor 图形界面，也能由 ide-toolbox 在命令行里驱动 Cursor Agent。<a href="#tutorial" style="color:var(--accent)">→ 完整操作教程</a></p>
       <table>
         <thead>
           <tr><th>命令</th><th>用途</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>start</code></td><td>只读接手项目，汇报状态、风险和 suggested-assets</td></tr>
-          <tr><td><code>plan</code></td><td>只读生成计划，列出影响范围、验证、回滚</td></tr>
-          <tr><td><code>run --execute</code></td><td>受控执行任务，结束后接 health / handoff</td></tr>
-          <tr><td><code>milestone</code></td><td>里程碑收尾，检查 ai-context 和下一步</td></tr>
-          <tr><td><code>new-notion</code></td><td>新建 Notion 双轨项目并生成接手 prompt</td></tr>
+          <tr><td><code>chat</code></td><td>交互多轮对话（最接近 IDE Agent 面板）</td></tr>
+          <tr><td><code>continue</code></td><td>续上一段 CLI 会话</td></tr>
+          <tr><td><code>start</code></td><td>只读接手，汇报状态与 suggested-assets</td></tr>
+          <tr><td><code>plan</code></td><td>只读计划（默认 Plan 模式）</td></tr>
+          <tr><td><code>run --execute</code></td><td>受控执行，结束后 health / handoff</td></tr>
+          <tr><td><code>milestone</code></td><td>里程碑收尾 + ai-context 写回验证 + 文档同步检查</td></tr>
+          <tr><td><code>new-notion</code></td><td>新建 Notion 双轨项目</td></tr>
         </tbody>
       </table>
-      <pre><span class="kw">./scripts/agent-cli.sh</span> start <span class="str">"/path/to/project"</span> --dry-run
-<span class="kw">./scripts/agent-cli.sh</span> plan <span class="str">"/path/to/project"</span> <span class="str">"任务目标"</span> --dry-run
-<span class="kw">./scripts/agent-cli.sh</span> run <span class="str">"/path/to/project"</span> <span class="str">"任务目标"</span> --execute</pre>
-      <p class="section-desc" style="margin-top:12px">默认不使用 <code>--force</code> / <code>--yolo</code>；删除、覆盖、权限、密钥、Git push、Notion 大规模结构修改仍必须确认。</p>
+      <pre><span class="kw">./agent chat</span> <span class="str">.</span>
+<span class="kw">./agent milestone</span> <span class="str">.</span> --summary <span class="str">"本段完成了什么"</span>
+<span class="kw">./agent plan</span> <span class="str">"/path/to/project"</span> <span class="str">"任务目标"</span></pre>
+      <p class="section-desc" style="margin-top:12px">默认不使用 <code>--force</code> / <code>--yolo</code>；删除、覆盖、权限、密钥、Git push 仍须确认。</p>
     </section>
 
     <section>
@@ -676,6 +1017,8 @@
         <a class="doc-link" href="docs/architecture.md"><strong>系统架构</strong><span>数据流与设计原则</span></a>
         <a class="doc-link" href="docs/scripts-reference.md"><strong>脚本参考</strong><span>参数、风险、输出</span></a>
         <a class="doc-link" href="docs/troubleshooting.md"><strong>故障排查</strong><span>常见问题修复</span></a>
+        <a class="doc-link" href="docs/agent-cli-self-maintenance.md"><strong>Agent CLI 自维护</strong><span>关闭 IDE 后的终端用法</span></a>
+        <a class="doc-link" href="docs/agent-cli-modes-and-subagents.md"><strong>Plan / Subagent</strong><span>模式与子 Agent 说明</span></a>
         <a class="doc-link" href="docs/changelog.md"><strong>变更记录</strong><span>工具箱版本历史</span></a>
       </div>
     </section>

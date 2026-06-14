@@ -121,14 +121,16 @@ Cursor 打开项目 → AGENTS.md 指引读 suggested-assets
 
 ```bash
 cd ide-toolbox
+./agent chat .                              # 多轮交互（最接近 IDE）
+./agent continue . "补充需求"
 ./agent start . --dry-run
 ./agent start .
 ./agent plan . "任务目标"
-./agent milestone .
+./agent milestone . --summary "本段完成了什么"
 ./agent run . "任务目标" --execute   # 需 config/agent_cli.allow_execute: true
 ```
 
-维护 ide-toolbox 自身详见 [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)。
+维护 ide-toolbox 自身详见 [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)。Plan / Subagent 见 [docs/agent-cli-modes-and-subagents.md](docs/agent-cli-modes-and-subagents.md)。
 
 ## 直接脚本
 

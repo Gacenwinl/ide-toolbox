@@ -36,6 +36,14 @@
 - [ ] 同步 `NOTION_INDEX.md`
 - [ ] 首次运行 `python3 scripts/notion_hygiene.py verify`
 
+## 文档同步清单（每里程碑必查，完成后全部 [x]）
+
+- [ ] `docs/ai-context.md` — Current State / Last Session 已更新
+- [ ] `README.md` — 与当前 Notion 结构/用法一致
+- [ ] `docs/HANDOFF.md` — 5 分钟接手路径仍准确
+- [ ] `manifest.yaml` / `NOTION_INDEX.md` — 映射与索引一致
+- [ ] `docs/changelog.md` — 有本阶段变更记录（若使用）
+
 ## Source Of Truth
 
 | 文件 | 用途 |

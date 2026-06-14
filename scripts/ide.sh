@@ -274,23 +274,28 @@ action_init_agent_library() { "${SCRIPT_DIR}/init-agent-library.sh"; }
 
 action_agent_cli() {
   ensure_existing_path
-  local command task execute_flag
-  printf 'Agent CLI: 1) start  2) plan  3) run  4) milestone\n'
+  local command task execute_flag summary_flag
+  printf 'Agent CLI: 1) start  2) plan  3) run  4) milestone  5) chat  6) continue\n'
   read -r -p "选择 [1]: " command
   case "${command:-1}" in
     1|start) command="start" ;;
     2|plan) command="plan" ;;
     3|run) command="run" ;;
     4|milestone) command="milestone" ;;
+    5|chat) command="chat" ;;
+    6|continue) command="continue" ;;
     *) die "无效 Agent CLI 选项" ;;
   esac
   if [[ "$command" == "plan" || "$command" == "run" ]]; then
     read -r -p "任务目标: " task
     [[ -n "$task" ]] || die "任务目标不能为空"
+  elif [[ "$command" == "chat" || "$command" == "continue" ]]; then
+    read -r -p "任务/补充说明（可留空）: " task
   else
     task=""
   fi
   execute_flag=()
+  summary_flag=()
   if [[ "$command" == "run" ]]; then
     if confirm "run 会调用 Cursor Agent 执行任务。是否允许执行模式？"; then
       execute_flag=(--execute)
@@ -298,10 +303,16 @@ action_agent_cli() {
       log "未启用执行模式，将按 plan 模式生成方案"
     fi
   fi
+  if [[ "$command" == "milestone" ]]; then
+    read -r -p "收尾摘要（可选，写入 Last Session）: " summary_input
+    if [[ -n "$summary_input" ]]; then
+      summary_flag=(--summary "$summary_input")
+    fi
+  fi
   if [[ -n "$task" ]]; then
-    "${SCRIPT_DIR}/agent-cli.sh" "$command" "$TARGET_PATH" "$task" "${execute_flag[@]}"
+    "${SCRIPT_DIR}/agent-cli.sh" "$command" "$TARGET_PATH" "$task" "${execute_flag[@]}" "${summary_flag[@]}"
   else
-    "${SCRIPT_DIR}/agent-cli.sh" "$command" "$TARGET_PATH" "${execute_flag[@]}"
+    "${SCRIPT_DIR}/agent-cli.sh" "$command" "$TARGET_PATH" "${execute_flag[@]}" "${summary_flag[@]}"
   fi
 }
 

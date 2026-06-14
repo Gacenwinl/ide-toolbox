@@ -30,6 +30,14 @@
 
 - [ ] （创建后填写）
 
+## 文档同步清单（每里程碑必查，完成后全部 [x]）
+
+- [ ] `docs/ai-context.md` — Current State / Last Session 已更新
+- [ ] `README.md` — 与当前功能/用法一致
+- [ ] `docs/runbook.md` — 长跑/验证步骤已更新
+- [ ] `docs/changelog.md` — 有本阶段变更记录（若项目使用 changelog）
+- [ ] `docs/HANDOFF.md` — 仅 Notion 项目：接手路径仍准确
+
 ## Source Of Truth
 
 | 文件 | 用途 |

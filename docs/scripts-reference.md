@@ -214,24 +214,33 @@ NOTION_HUB_TITLE="行前准备 Hub" \
 
 ```bash
 ./scripts/agent-cli.sh start /path/to/project [--dry-run]
-./scripts/agent-cli.sh plan /path/to/project "任务目标" [--dry-run]
+./scripts/agent-cli.sh plan /path/to/project "任务目标" [--mode plan|ask] [--dry-run]
 ./scripts/agent-cli.sh run /path/to/project "任务目标" [--execute]
-./scripts/agent-cli.sh milestone /path/to/project [--dry-run]
+./scripts/agent-cli.sh milestone /path/to/project [--summary "摘要"] [--dry-run]
+./scripts/agent-cli.sh chat /path/to/project ["初始任务"]
+./scripts/agent-cli.sh continue /path/to/project ["补充任务"]
+./scripts/agent-cli.sh resume /path/to/project [--chat-id ID]
 ./scripts/agent-cli.sh new-notion PROJECT_NAME --purpose "项目目标" [--dry-run]
 ```
+
+根目录 `./agent` 等同本脚本。
 
 ### 行为
 
 - 调用 `query-agent-assets.sh` 生成 Suggested Assets 上下文
 - 用 `templates/agent-cli/*.md` 和 `agent-cli-prompt.py` 组装标准 prompt
-- 默认使用 `cursor agent --print --workspace <project>`
-- `start` / `plan` 默认只读；`run` 未加 `--execute` 时强制计划模式
-- `run --execute` 后按配置运行 `project-health.sh` 和 `session-handoff.sh --dry-run`
-- 不默认使用 `--force` / `--yolo`
+- 默认 headless：`cursor agent --print --workspace <project>`
+- `chat` / `continue`：交互 TUI（无 `--print`），支持多轮追问
+- `continue` / `resume`：映射 `cursor agent --continue` / `--resume`
+- `start` / `plan` 默认 `--mode plan` 只读；`run` 未加 `--execute` 时强制计划模式
+- `milestone`：运行前 health/handoff 预检；运行后验证 ai-context 是否被修改；`--summary` 确定性写入 Last Session
+- Subagent 由 Cursor Agent 自动调度；自定义定义见 `.cursor/agents/`
+- 详见 [agent-cli-modes-and-subagents.md](agent-cli-modes-and-subagents.md)
 
 ### 风险
 
 - `--dry-run` 只生成 prompt，不调用 Agent
+- `chat`/`continue` 为交互会话，退出后需 `milestone` 写回 ai-context
 - `run --execute` 可能修改项目文件；若 Git 工作区不干净且配置要求干净工作区，会拒绝执行
 - 删除、覆盖、权限、密钥、Git push、Notion 大规模结构修改仍必须等待用户确认
 

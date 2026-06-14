@@ -595,6 +595,109 @@ EOF
   log "Agent Library 已匹配建议资产条目: ${count}"
 }
 
+file_mtime_epoch() {
+  local f="$1"
+  [[ -f "$f" ]] || { echo 0; return 0; }
+  if stat -f %m "$f" >/dev/null 2>&1; then
+    stat -f %m "$f"
+  else
+    stat -c %Y "$f"
+  fi
+}
+
+read_handoff_policy_value() {
+  local key="$1"
+  local default="${2:-}"
+  if [[ ! -f "$POLICY_FILE" ]]; then
+    echo "$default"
+    return
+  fi
+  awk -v key="$key" -v default="$default" '
+    /^handoff:/ { in_section=1; next }
+    in_section && /^[A-Za-z]/ && $0 !~ /^  / { in_section=0 }
+    in_section && $0 ~ "^  " key ":" {
+      line=$0
+      sub(/^[^:]*:[ ]*"?/, "", line)
+      sub(/".*$/, "", line)
+      gsub(/[[:space:]]+$/, "", line)
+      print line
+      found=1
+      exit
+    }
+    END { if (!found) print default }
+  ' "$POLICY_FILE"
+}
+
+# 审计文档同步：供 session-handoff / project-health 调用
+# 用法: audit_doc_sync /path ok_fn warn_fn   （ok_fn/warn_fn 为函数名）
+audit_doc_sync() {
+  local target_dir="$1"
+  local ok_fn="$2"
+  local warn_fn="$3"
+  local ai_context="${target_dir}/docs/ai-context.md"
+  local now changelog_mtime age_days skew readme_mtime html_mtime runbook_mtime
+  local verify_checklist stale_days skew_sec changelog_mtime
+
+  verify_checklist="$(read_handoff_policy_value verify_doc_sync_checklist true)"
+  stale_days="$(read_handoff_policy_value warn_stale_readme_after_changelog_days 7)"
+  skew_sec="$(read_handoff_policy_value readme_lag_seconds 172800)"
+
+  if [[ "$verify_checklist" != "true" || ! -f "$ai_context" ]]; then
+    return 0
+  fi
+
+  if grep -q "## 文档同步清单" "$ai_context" 2>/dev/null; then
+    local unchecked
+    unchecked="$(awk '
+      /^## 文档同步清单/ { flag=1; next }
+      flag && /^## / { exit }
+      flag && /^- \[ \]/ { count++ }
+      END { print count+0 }
+    ' "$ai_context")"
+    if [[ "$unchecked" -gt 0 ]]; then
+      "$warn_fn" "文档同步清单仍有 ${unchecked} 项未勾选 — milestone 后应全部 [x] 或删除过时项"
+    else
+      "$ok_fn" "文档同步清单已全部勾选"
+    fi
+  else
+    "$warn_fn" "ai-context 缺少「文档同步清单」节（upgrade 或 milestone 时补齐）"
+  fi
+
+  changelog_mtime=0
+  if [[ -f "${target_dir}/docs/changelog.md" ]]; then
+    changelog_mtime="$(file_mtime_epoch "${target_dir}/docs/changelog.md")"
+  fi
+
+  if [[ "$changelog_mtime" -gt 0 ]]; then
+    now="$(date +%s)"
+    age_days=$(( (now - changelog_mtime) / 86400 ))
+    if [[ "$age_days" -le "$stale_days" ]]; then
+      local rel doc_file fm
+      for rel in README.md README.html docs/runbook.md; do
+        doc_file="${target_dir}/${rel}"
+        [[ -f "$doc_file" ]] || continue
+        fm="$(file_mtime_epoch "$doc_file")"
+        if [[ "$fm" -lt $((changelog_mtime - skew_sec)) ]]; then
+          "$warn_fn" "${rel} 可能未随 docs/changelog.md 同步（changelog 近 ${stale_days} 天内有更新）"
+        else
+          "$ok_fn" "${rel} 与 changelog 更新时间一致（或更新）"
+        fi
+      done
+    fi
+  fi
+
+  if [[ -f "$ai_context" ]]; then
+    local ctx_mtime readme_m
+    ctx_mtime="$(file_mtime_epoch "$ai_context")"
+    if [[ -f "${target_dir}/README.md" ]]; then
+      readme_m="$(file_mtime_epoch "${target_dir}/README.md")"
+      if [[ "$ctx_mtime" -gt "$readme_m" && "$ctx_mtime" -gt $((readme_m + skew_sec)) ]]; then
+        "$warn_fn" "ai-context 比 README.md 新很多 — 是否忘记同步 README"
+      fi
+    fi
+  fi
+}
+
 sanitize_menu_choice() {
   local raw="$1"
   raw="${raw//$'\r'/}"

@@ -74,6 +74,8 @@
 | `default_provider` | 执行后端（当前 `cursor`） |
 | `default_mode` | 默认模式（`plan` 只读） |
 | `allow_execute` | 是否允许 `run --execute` 改文件 |
+| `allow_continue` | 是否允许 `chat` / `continue` / `resume` |
+| `milestone_verify_writeback` | milestone 后检查 ai-context 是否真的被修改 |
 | `require_clean_git_for_execute` | 执行前是否要求 Git 干净 |
 
 改完后验证：

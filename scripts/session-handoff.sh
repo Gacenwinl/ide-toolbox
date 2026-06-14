@@ -85,6 +85,8 @@ else
   handoff_warn "缺少 docs/suggested-assets.md（可 upgrade 或 new-ai-project 挂钩）"
 fi
 
+audit_doc_sync "$TARGET_DIR" handoff_ok handoff_warn
+
 if [[ "$DRY_RUN" == "true" ]]; then
   log "[dry-run] 未修改文件"
   exit 0
@@ -117,9 +119,10 @@ fi
 
 printf '\n--- 会话结束清单 ---\n'
 printf '1. 更新 docs/ai-context.md → Current State / Last Session / Recent Decisions\n'
-printf '2. 重要对话 → capture-conversation.sh 或 conversation-reuse.md\n'
-printf '3. 中文说明：改动、验证、回滚、建议 commit message\n'
-printf '4. 可复用且跨项目 → promote-agent-asset.sh（非 private-local）\n'
+printf '2. 勾选「文档同步清单」→ README / runbook / changelog 等与 ai-context 一致\n'
+printf '3. 重要对话 → capture-conversation.sh 或 conversation-reuse.md\n'
+printf '4. 中文说明：改动、验证、回滚、建议 commit message\n'
+printf '5. 可复用且跨项目 → promote-agent-asset.sh（非 private-local）\n'
 
 printf '\n总结: OK=%d, WARN=%d\n' "$OK_COUNT" "$WARN_COUNT"
 if [[ "$WARN_COUNT" -gt 0 ]]; then

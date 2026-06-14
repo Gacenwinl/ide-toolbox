@@ -22,6 +22,7 @@
 - 排错：[docs/troubleshooting.md](docs/troubleshooting.md)
 - 跟进：[docs/20260614-ide-toolbox-followup.md](docs/20260614-ide-toolbox-followup.md)
 - **关闭 Cursor IDE 后自维护**：[docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)
+- **Plan / 多轮 / Subagent**：[docs/agent-cli-modes-and-subagents.md](docs/agent-cli-modes-and-subagents.md)
 
 ## 关闭 Cursor IDE 后如何维护本工具箱
 
@@ -29,9 +30,11 @@
 
 ```bash
 cd ide-toolbox
-./agent start .              # 只读接手
+./agent chat .               # 多轮交互（最接近 IDE 聊天）
+./agent continue . "补充需求" # 续上一段 CLI 会话
+./agent start .              # 只读接手（单轮）
 ./agent plan . "任务目标"     # 只读计划
-./agent milestone .          # 里程碑收尾（先 health/handoff 预检）
+./agent milestone .          # 里程碑收尾（含写回验证）
 ./agent run . "任务" --execute  # 需 config/agent_cli.allow_execute: true
 ```
 
@@ -96,4 +99,5 @@ cd ide-toolbox
 - `把本次产出晋升到 Agent Library`
 - `刷新这个项目的 suggested-assets`
 - `用 agent-cli 接手这个项目`
+- `用 agent-cli 多轮讨论（chat/continue）`
 - `用 agent-cli 做里程碑收尾`

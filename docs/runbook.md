@@ -23,14 +23,16 @@
 ## Agent CLI（关闭 Cursor IDE 后）
 
 ```bash
+cd ide-toolbox
+./agent chat .                              # 多轮交互
+./agent continue . "补充需求"
 ./agent start . --dry-run
-./agent start .
 ./agent plan . "任务目标"
-./agent milestone .
+./agent milestone . --summary "本段完成了什么"
 ./agent run . "任务" --execute   # 需 allow_execute: true，且 Git 工作区干净
 ```
 
-详见 [agent-cli-self-maintenance.md](agent-cli-self-maintenance.md)。
+详见 [agent-cli-self-maintenance.md](agent-cli-self-maintenance.md) 与 [agent-cli-modes-and-subagents.md](agent-cli-modes-and-subagents.md)。
 
 ## 维护菜单/脚本后验证
 
