@@ -2,6 +2,15 @@
 
 ide-toolbox 工具箱自身变更，不是业务项目 changelog。
 
+## 2026-06-14 — 用户可见复利用法补齐
+
+### 更新
+
+- `README.md`：增加 Agent 复利“日常怎么用”（新建、读 suggested-assets、session-handoff、promote）
+- `README.md`：增加项目全生命周期流程（创建、接手、开展、里程碑、晋升、结束/归档）与常用 AI 口令
+- `README.html`：增加 Agent 复利使用流程区块与项目全生命周期可视化区块，并同步 `./ide` 主菜单编号到 30
+- `docs/ai-context.md` / followup：记录用户可见用法已补齐
+
 ## 2026-06-14 — Codex 规则与 Obsidian 边界收敛
 
 ### 更新

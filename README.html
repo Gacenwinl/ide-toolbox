@@ -406,7 +406,7 @@
         <div class="card">
           <div class="card-icon">🧠</div>
           <h3>项目文件记忆</h3>
-          <p>AGENTS.md、runbook、ai-context — 换设备不丢上下文。</p>
+          <p>AGENTS.md、ai-context、session-handoff — 换设备不丢上下文，聊天不当唯一记忆。</p>
         </div>
         <div class="card">
           <div class="card-icon">🔒</div>
@@ -427,6 +427,102 @@
           <div class="card-icon">🏃</div>
           <h3>长跑护栏</h3>
           <p>分阶段执行、高风险确认、dry-run 归档，符合全权放任习惯。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">♻️</div>
+          <h3>Agent 复利</h3>
+          <p>新项目自动生成 suggested-assets；第二次跨项目仍需要时，再晋升到 05_Agent-Library。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Agent 复利怎么用</h2>
+      <p class="section-desc">不是后台自动总结所有聊天，而是自动铺好结构、规则要求写回、收尾脚本检查、人工确认晋升。</p>
+      <table>
+        <thead>
+          <tr><th>阶段</th><th>你做什么</th><th>系统做什么</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>新建项目</td>
+            <td><code>./ide</code> → <strong>11) 新建多端 AI 项目</strong></td>
+            <td>生成 <code>AGENTS.md</code>、<code>docs/ai-context.md</code>、<code>docs/suggested-assets.md</code></td>
+          </tr>
+          <tr>
+            <td>开始工作</td>
+            <td>打开项目，按 <code>AGENTS.md</code> 读取文件</td>
+            <td>非 private-local 项目会看到推荐共享资产</td>
+          </tr>
+          <tr>
+            <td>结束一段工作</td>
+            <td>更新 <code>docs/ai-context.md</code> 的 Current State / Last Session</td>
+            <td><code>session-handoff.sh</code> 检查是否可移交</td>
+          </tr>
+          <tr>
+            <td>值得复用</td>
+            <td>确认去敏后运行 promote 或菜单 26</td>
+            <td>写入 <code>05_Agent-Library</code> + <code>manifest.yaml</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <pre><span class="kw">./scripts/session-handoff.sh</span> <span class="str">"/path/to/project"</span>
+<span class="kw">./scripts/query-agent-assets.sh</span> --task <span class="str">"任务关键词"</span>
+<span class="kw">./scripts/promote-agent-asset.sh</span> --project <span class="str">"/path"</span> --source <span class="str">"docs/x.md"</span> --id <span class="str">"asset-id"</span> --title <span class="str">"标题"</span></pre>
+    </section>
+
+    <section>
+      <h2>项目全生命周期</h2>
+      <p class="section-desc">从创建到结束，每个阶段都有你要做的事、给 AI 的口令，以及应该写回的文件。</p>
+      <table>
+        <thead>
+          <tr><th>阶段</th><th>你要做什么</th><th>给 AI 的口令</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0. 创建前</td>
+            <td>确定项目目标、类型（code/docs/knowledge/automation）和隐私（private-local 用于证件/签证/求职）</td>
+            <td>“用 ide-toolbox 新建一个项目，名字叫 260614-xxx，类型是 knowledge，用途是 xxx，隐私策略是 private-local。”</td>
+          </tr>
+          <tr>
+            <td>1. 开始项目</td>
+            <td>先让 AI 接手，不要直接改文件；检查 AGENTS、ai-context、runbook、suggested-assets</td>
+            <td>“先按 AGENTS.md 接手这个项目。请说明你会读取哪些文件、当前项目状态是什么，不要先改文件。”</td>
+          </tr>
+          <tr>
+            <td>2. 开展任务</td>
+            <td>要求计划、修改、验证、写回；必要时先查询 Agent Library</td>
+            <td>“按长跑模式执行：先给计划，再修改，最后验证。结束前必须更新 ai-context。”</td>
+          </tr>
+          <tr>
+            <td>3. 里程碑结束</td>
+            <td>运行 session-handoff，确保 Current State / Last Session / Open Items 可移交</td>
+            <td>“这是一个里程碑。请按 session-handoff 收尾，列出已完成、下一步、验证方式、回滚方式。”</td>
+          </tr>
+          <tr>
+            <td>4. 晋升资产</td>
+            <td>只有第二个不同项目仍需要的 SOP/Skill 才晋升；private-local 永不晋升</td>
+            <td>“评估这次产出是否值得晋升到 Agent Library。若值得，先说明去敏方案。”</td>
+          </tr>
+          <tr>
+            <td>5. 项目结束</td>
+            <td>做 project-health、session-handoff、整理 README/ai-context，再归档预览</td>
+            <td>“这个项目准备结束/暂停。请做最终收尾：体检、handoff、归档建议、回滚方式。”</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="cards" style="margin-top:16px">
+        <div class="card">
+          <h3>必须记住</h3>
+          <p>聊天不是记忆；重要结论写入 <code>docs/ai-context.md</code> 或 <code>docs/YYYYMMDD-*.md</code>。</p>
+        </div>
+        <div class="card">
+          <h3>收尾门禁</h3>
+          <p>有 WARN 先修 WARN，不继续扩功能：<code>./scripts/session-handoff.sh /path/to/project</code></p>
+        </div>
+        <div class="card">
+          <h3>复利纪律</h3>
+          <p>第一次留项目内；第二次跨项目仍需要才晋升；<code>private-local</code> 永不进共享库。</p>
         </div>
       </div>
     </section>
@@ -474,9 +570,10 @@
           <tr><td>1–10</td><td>快速打开最近项目（最多 5 个、7 天内有活动）</td></tr>
           <tr><td>11</td><td>新建多端 AI 项目</td></tr>
           <tr><td>12</td><td>新建 Notion 维护项目</td></tr>
-          <tr><td>13–21</td><td>体检、升级、沉淀、登记设备、批量升级、设备检查、GitHub、归档</td></tr>
-          <tr><td>22–25</td><td>项目索引、存储策略、更换路径、Codex 接入</td></tr>
-          <tr><td>26 / 0</td><td>退出</td></tr>
+          <tr><td>13–24</td><td>体检、升级、沉淀、收尾移交、登记设备、批量升级、设备检查、GitHub、归档、索引、存储策略</td></tr>
+          <tr><td>25–27</td><td>查询 Agent 资产库、晋升资产到库、初始化 Agent Library</td></tr>
+          <tr><td>28–29</td><td>更换路径、Codex 接入与用户规则</td></tr>
+          <tr><td>30 / 0</td><td>退出</td></tr>
         </tbody>
       </table>
     </section>

@@ -33,6 +33,8 @@ Captured at: 2026-06-14
 - [x] 稳定性收敛审计：菜单文档与主流程一致；修复备用 dispatch 映射；修复 `project-health.sh` 错误函数名
 - [x] Codex 用户规则补齐 session-handoff / Current State / Last Session
 - [x] onboarding 增加 Obsidian 边界：只作同源 Markdown 阅读界面，不作第二套记忆系统
+- [x] README / README.html 补齐用户用法：新建 → suggested-assets → session-handoff → promote 到 05
+- [x] README / README.html 补齐项目全生命周期：创建前、接手、开展、里程碑、晋升、结束/归档，以及给 AI 的口令
 
 ### 待另端 / 用户
 
