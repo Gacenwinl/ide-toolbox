@@ -105,9 +105,7 @@ while IFS= read -r -d '' file; do
   replace_placeholders "$file" "$PROJECT_NAME" "$PROJECT_TYPE" "$PROJECT_PURPOSE" "$PRIVACY_PROFILE"
 done < <(find "$TARGET_DIR" -type f \( -name "*.md" -o -name "*.mdc" -o -name "*.yaml" -o -name "*.yml" \) -print0)
 
-if [[ "$PROJECT_TYPE" != "notion-sync" ]]; then
-  wire_agent_library "$TARGET_DIR" "$PROJECT_TYPE" "$PROJECT_PURPOSE" "$PRIVACY_PROFILE"
-fi
+wire_agent_library "$TARGET_DIR" "$PROJECT_TYPE" "$PROJECT_PURPOSE" "$PRIVACY_PROFILE"
 
 if [[ "$PROJECT_TYPE" == "notion-sync" ]]; then
   chmod +x "${TARGET_DIR}/scripts/"*.sh 2>/dev/null || true

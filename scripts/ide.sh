@@ -30,6 +30,7 @@ MAIN_MENU_ITEMS=(
   "晋升资产到库"
   "初始化 Agent Library"
   "更换目标路径"
+  "Agent CLI 自动驾驶"
   "Codex 接入与用户规则"
   "退出"
 )
@@ -44,6 +45,7 @@ PATH_MENU_ITEMS=(
   "晋升本项目资产到库"
   "检查 Git 状态"
   "检查 GitHub 就绪情况"
+  "Agent CLI 自动驾驶"
   "归档预览 (dry-run)"
   "归档执行"
   "更换目标路径"
@@ -248,8 +250,7 @@ action_promote_agent_asset() {
     --tags "$tags" \
     --triggers "$triggers" \
     --project-types "code,docs,knowledge,automation" \
-    --when-to-use "见 manifest 与源文件" \
-    --source-project "$(basename "$TARGET_PATH")"
+    --when-to-use "见 manifest 与源文件"
 }
 
 action_refresh_suggested_assets() {
@@ -270,6 +271,39 @@ action_refresh_suggested_assets() {
 }
 
 action_init_agent_library() { "${SCRIPT_DIR}/init-agent-library.sh"; }
+
+action_agent_cli() {
+  ensure_existing_path
+  local command task execute_flag
+  printf 'Agent CLI: 1) start  2) plan  3) run  4) milestone\n'
+  read -r -p "选择 [1]: " command
+  case "${command:-1}" in
+    1|start) command="start" ;;
+    2|plan) command="plan" ;;
+    3|run) command="run" ;;
+    4|milestone) command="milestone" ;;
+    *) die "无效 Agent CLI 选项" ;;
+  esac
+  if [[ "$command" == "plan" || "$command" == "run" ]]; then
+    read -r -p "任务目标: " task
+    [[ -n "$task" ]] || die "任务目标不能为空"
+  else
+    task=""
+  fi
+  execute_flag=()
+  if [[ "$command" == "run" ]]; then
+    if confirm "run 会调用 Cursor Agent 执行任务。是否允许执行模式？"; then
+      execute_flag=(--execute)
+    else
+      log "未启用执行模式，将按 plan 模式生成方案"
+    fi
+  fi
+  if [[ -n "$task" ]]; then
+    "${SCRIPT_DIR}/agent-cli.sh" "$command" "$TARGET_PATH" "$task" "${execute_flag[@]}"
+  else
+    "${SCRIPT_DIR}/agent-cli.sh" "$command" "$TARGET_PATH" "${execute_flag[@]}"
+  fi
+}
 
 action_show_codex_setup() {
   cat "${TOOLBOX_ROOT}/docs/codex-onboarding.md"
@@ -349,8 +383,9 @@ dispatch_home_choice() {
     17) action_promote_agent_asset ;;
     18) action_init_agent_library ;;
     19) action_change_path ;;
-    20) action_show_codex_setup ;;
-    21) exit 0 ;;
+    20) action_agent_cli ;;
+    21) action_show_codex_setup ;;
+    22) exit 0 ;;
     *) warn "无效选项: $choice"; return 1 ;;
   esac
 }
@@ -380,8 +415,9 @@ run_main_choice() {
     17) action_promote_agent_asset ;;
     18) action_init_agent_library ;;
     19) action_change_path ;;
-    20) action_show_codex_setup ;;
-    21|0|q|Q) exit 0 ;;
+    20) action_agent_cli ;;
+    21) action_show_codex_setup ;;
+    22|0|q|Q) exit 0 ;;
     *) warn "无效选项: $1" ;;
   esac
 }
@@ -397,11 +433,12 @@ run_path_choice() {
     7) action_promote_agent_asset ;;
     8) action_git_status ;;
     9) action_github_check ;;
-    10) action_archive_preview ;;
-    11) action_archive_execute ;;
-    12) action_change_path ;;
-    13) return 2 ;;
-    14|0|q|Q) exit 0 ;;
+    10) action_agent_cli ;;
+    11) action_archive_preview ;;
+    12) action_archive_execute ;;
+    13) action_change_path ;;
+    14) return 2 ;;
+    15|0|q|Q) exit 0 ;;
     *) warn "无效选项: $1" ;;
   esac
 }

@@ -186,6 +186,20 @@ Obsidian 只能作为**同一批 Markdown 的阅读界面**，不要另建一套
 - 把 `private-local` 项目放入公共 vault
 - 用 Obsidian 链接替代 `session-handoff.sh` 或 `query-agent-assets.sh`
 
+## 关闭 Cursor IDE 后（Agent CLI）
+
+不打开 Cursor 图形界面时，在终端维护工具箱或业务项目：
+
+```bash
+cd ide-toolbox
+./agent start . --dry-run
+./agent start .
+./agent plan . "任务目标"
+./agent milestone .
+```
+
+详见 [agent-cli-self-maintenance.md](agent-cli-self-maintenance.md)。
+
 ## 接入完成检查清单
 
 - [ ] `./scripts/check-device.sh` 活动目录为**本设备推荐路径**
@@ -196,9 +210,11 @@ Obsidian 只能作为**同一批 Markdown 的阅读界面**，不要另建一套
 - [ ] substantial 工作结束前知道如何运行 `session-handoff.sh`
 - [ ] （可选 Obsidian）确认没有第二套 Agent 记忆
 - [ ] （可选）`gh auth login` 完成
+- [ ] （可选 Agent CLI）`./agent start . --dry-run` 可用
 
 ## 下一步
 
 - [automation-playbook.md](../automation-playbook.md)
+- [agent-cli-self-maintenance.md](agent-cli-self-maintenance.md)
 - [storage-policy.md](../storage-policy.md)
 - [troubleshooting.md](troubleshooting.md)

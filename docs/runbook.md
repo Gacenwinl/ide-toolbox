@@ -20,11 +20,25 @@
 - 移动/归档业务项目
 - 自动安装依赖
 
+## Agent CLI（关闭 Cursor IDE 后）
+
+```bash
+./agent start . --dry-run
+./agent start .
+./agent plan . "任务目标"
+./agent milestone .
+./agent run . "任务" --execute   # 需 allow_execute: true，且 Git 工作区干净
+```
+
+详见 [agent-cli-self-maintenance.md](agent-cli-self-maintenance.md)。
+
 ## 维护菜单/脚本后验证
 
 ```bash
 bash -n scripts/*.sh
+python3 -m py_compile scripts/agent-cli-prompt.py scripts/agent-library.py
 ./scripts/check-device.sh
+./agent start . --dry-run
 IDE_MENU_PLAIN=1 ./ide   # 非交互冒烟（输入 0 退出）
 ```
 

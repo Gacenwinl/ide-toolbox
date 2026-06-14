@@ -65,7 +65,12 @@ done
 [[ -d "$TARGET_DIR" ]] || die "目录不存在: $TARGET_DIR"
 
 PROJECT_NAME="$(basename "$TARGET_DIR")"
-TEMPLATE_DIR="${TOOLBOX_ROOT}/templates/ai-project"
+if is_notion_project "$TARGET_DIR"; then
+  TEMPLATE_DIR="${TOOLBOX_ROOT}/templates/notion-project"
+  PROJECT_TYPE="notion-sync"
+else
+  TEMPLATE_DIR="${TOOLBOX_ROOT}/templates/ai-project"
+fi
 
 copy_if_missing() {
   local src="$1"
@@ -89,13 +94,20 @@ log "升级项目: $TARGET_DIR"
 copy_if_missing "${TEMPLATE_DIR}/AGENTS.md" "${TARGET_DIR}/AGENTS.md"
 copy_if_missing "${TEMPLATE_DIR}/README.md" "${TARGET_DIR}/README.md"
 copy_if_missing "${TEMPLATE_DIR}/docs/ai-context.md" "${TARGET_DIR}/docs/ai-context.md"
-copy_if_missing "${TEMPLATE_DIR}/docs/runbook.md" "${TARGET_DIR}/docs/runbook.md"
-copy_if_missing "${TEMPLATE_DIR}/docs/conversation-reuse.md" "${TARGET_DIR}/docs/conversation-reuse.md"
-copy_if_missing "${TEMPLATE_DIR}/docs/codex-handoff.md" "${TARGET_DIR}/docs/codex-handoff.md"
-copy_if_missing "${TEMPLATE_DIR}/docs/devices.md" "${TARGET_DIR}/docs/devices.md"
 copy_if_missing "${TEMPLATE_DIR}/docs/agent-library.md" "${TARGET_DIR}/docs/agent-library.md"
 copy_if_missing "${TEMPLATE_DIR}/docs/suggested-assets.md" "${TARGET_DIR}/docs/suggested-assets.md"
-copy_if_missing "${TEMPLATE_DIR}/.cursor/rules/ai-agent-workflow.mdc" "${TARGET_DIR}/.cursor/rules/ai-agent-workflow.mdc"
+if is_notion_project "$TARGET_DIR"; then
+  copy_if_missing "${TEMPLATE_DIR}/docs/HANDOFF.md" "${TARGET_DIR}/docs/HANDOFF.md"
+  copy_if_missing "${TEMPLATE_DIR}/docs/notion-sync-policy.md" "${TARGET_DIR}/docs/notion-sync-policy.md"
+  copy_if_missing "${TEMPLATE_DIR}/docs/project-overview.md" "${TARGET_DIR}/docs/project-overview.md"
+  copy_if_missing "${TEMPLATE_DIR}/.cursor/rules/notion-project.mdc" "${TARGET_DIR}/.cursor/rules/notion-project.mdc"
+else
+  copy_if_missing "${TEMPLATE_DIR}/docs/runbook.md" "${TARGET_DIR}/docs/runbook.md"
+  copy_if_missing "${TEMPLATE_DIR}/docs/conversation-reuse.md" "${TARGET_DIR}/docs/conversation-reuse.md"
+  copy_if_missing "${TEMPLATE_DIR}/docs/codex-handoff.md" "${TARGET_DIR}/docs/codex-handoff.md"
+  copy_if_missing "${TEMPLATE_DIR}/docs/devices.md" "${TARGET_DIR}/docs/devices.md"
+  copy_if_missing "${TEMPLATE_DIR}/.cursor/rules/ai-agent-workflow.mdc" "${TARGET_DIR}/.cursor/rules/ai-agent-workflow.mdc"
+fi
 copy_if_missing "${TEMPLATE_DIR}/.gitignore" "${TARGET_DIR}/.gitignore"
 
 if [[ "$DRY_RUN" == "true" ]]; then

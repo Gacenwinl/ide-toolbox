@@ -21,6 +21,21 @@
 - 脚本：[docs/scripts-reference.md](docs/scripts-reference.md)
 - 排错：[docs/troubleshooting.md](docs/troubleshooting.md)
 - 跟进：[docs/20260614-ide-toolbox-followup.md](docs/20260614-ide-toolbox-followup.md)
+- **关闭 Cursor IDE 后自维护**：[docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)
+
+## 关闭 Cursor IDE 后如何维护本工具箱
+
+不打开 Cursor 图形界面时，在终端：
+
+```bash
+cd ide-toolbox
+./agent start .              # 只读接手
+./agent plan . "任务目标"     # 只读计划
+./agent milestone .          # 里程碑收尾（先 health/handoff 预检）
+./agent run . "任务" --execute  # 需 config/agent_cli.allow_execute: true
+```
+
+详见 [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)。
 
 ## 会话结束（ substantial 工作后必做）
 
@@ -47,6 +62,8 @@
 - 用户要查共享 Agent 资产时，优先调用 `scripts/query-agent-assets.sh` 或 `./ide` → 查询 Agent 资产库
 - 用户要把产出晋升到共享库时，优先调用 `scripts/promote-agent-asset.sh` 或 `./ide` → 晋升资产到库
 - 用户要刷新项目建议资产时，优先调用 `query-agent-assets.sh --output docs/suggested-assets.md` 或项目菜单「刷新 suggested-assets」
+- 用户要不打开 Cursor IDE、在终端维护项目时，优先调用 `./agent` 或 `scripts/agent-cli.sh`（见 [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)）
+- 维护 **ide-toolbox 自身**时，工作目录就是工具箱根目录，路径用 `.`
 
 ## 安全规则
 
@@ -78,3 +95,5 @@
 - `查一下资产库有没有适合这个项目的共享技能`
 - `把本次产出晋升到 Agent Library`
 - `刷新这个项目的 suggested-assets`
+- `用 agent-cli 接手这个项目`
+- `用 agent-cli 做里程碑收尾`

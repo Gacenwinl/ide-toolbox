@@ -21,7 +21,7 @@ usage() {
 选项:
   --task "任务关键词"
   --purpose "项目目标"
-  --type code|docs|knowledge|automation
+  --type code|docs|knowledge|automation|notion-sync
   --privacy code|knowledge|private-local|automation
   --format markdown|json
   --output /path/to/suggested-assets.md
@@ -57,16 +57,16 @@ if ! privacy_profile_allows_agent_library "$PRIVACY"; then
   exit 0
 fi
 
-LIB_DIR="$(resolve_agent_library_dir)"
-MANIFEST_NAME="$(read_agent_library_policy_value manifest "manifest.yaml")"
-MANIFEST_PATH="${LIB_DIR}/${MANIFEST_NAME}"
-PY="${SCRIPT_DIR}/agent-library.py"
+library_dir="$(resolve_agent_library_dir)"
+manifest_name="$(read_agent_library_policy_value manifest "manifest.yaml")"
+manifest_file="${library_dir}/${manifest_name}"
+python_helper="${SCRIPT_DIR}/agent-library.py"
 
-[[ -f "$MANIFEST_PATH" ]] || die "manifest 不存在: $MANIFEST_PATH（请先运行 init-agent-library.sh）"
+[[ -f "$manifest_file" ]] || die "manifest 不存在: ${manifest_file}（请先运行 init-agent-library.sh）"
 
-result="$(python3 "$PY" query \
-  --manifest "$MANIFEST_PATH" \
-  --library-dir "$LIB_DIR" \
+result="$(python3 "$python_helper" query \
+  --manifest "$manifest_file" \
+  --library-dir "$library_dir" \
   --task "$TASK" \
   --purpose "$PURPOSE" \
   --type "$PROJECT_TYPE" \

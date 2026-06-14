@@ -9,9 +9,12 @@ This is a local + Notion dual-track project.
 
 ## Start Every Session
 
-1. Read `docs/HANDOFF.md`
-2. Read `docs/notion-sync-policy.md`
-3. Read `manifest.yaml` and `NOTION_INDEX.md`
+1. Read `AGENTS.md`
+2. Read `docs/ai-context.md`
+3. Read `docs/HANDOFF.md`
+4. Read `docs/notion-sync-policy.md`
+5. Read `manifest.yaml` and `NOTION_INDEX.md`
+6. Unless privacy is `private-local`, read `docs/suggested-assets.md`
 
 ## Rules
 
@@ -19,3 +22,7 @@ This is a local + Notion dual-track project.
 - Task status: Notion is authoritative; mirror to CSV
 - Never store Notion URLs only in chat; write them to manifest and NOTION_INDEX
 - Append `CHANGELOG.md` after maintenance sessions
+- For long-running work, provide a plan before changing local files or Notion resources
+- After substantial work, update `docs/ai-context.md` Current State and Last Session
+- At milestones or project pause/end, run ide-toolbox `session-handoff.sh`
+- Promote only sanitized reusable patterns to `05_Agent-Library`; never promote private-local content

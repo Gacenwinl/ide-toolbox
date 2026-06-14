@@ -25,3 +25,5 @@
 - [docs/scripts-reference.md](docs/scripts-reference.md)
 
 | 260614-agent-wire-test | active | /Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/260614-agent-wire-test | knowledge | none | created | 2026-06-14 |
+
+| 260614-gym-monitor | active | /Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/260614-gym-monitor | notion-sync | none | created | 2026-06-14 |

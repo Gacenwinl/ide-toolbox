@@ -15,6 +15,8 @@ This directory is the automation toolbox, not a business project.
 - Keep new projects in `00_FileStation`, not inside `ide-toolbox`.
 - Use Git as the cross-device source of truth for durable project context.
 - Treat Synology Drive as file sync and backup, not Cursor/Codex chat sync.
+- For terminal-only maintenance without Cursor IDE, prefer `./agent` or `scripts/agent-cli.sh` (see `docs/agent-cli-self-maintenance.md`).
+- When maintaining ide-toolbox itself, use project path `.`.
 
 ## Safety
 

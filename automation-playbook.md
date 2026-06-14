@@ -32,8 +32,29 @@
 | **26** | 晋升资产到库 |
 | **27** | 初始化 Agent Library |
 | **28** | 更换目标路径 |
-| **29** | Codex 接入与用户规则（`docs/codex-onboarding.md`） |
-| **30** | 退出 |
+| **29** | Agent CLI 自动驾驶（`scripts/agent-cli.sh` 或 `./agent`） |
+| **30** | Codex 接入与用户规则（`docs/codex-onboarding.md`） |
+| **31** | 退出 |
+
+### 项目菜单（已选路径后）
+
+| 编号 | 能力 |
+|---|---|
+| **1** | 项目体检 |
+| **2** | 升级 |
+| **3** | 沉淀对话记忆 |
+| **4** | 会话收尾移交检查 |
+| **5** | 登记当前设备 |
+| **6** | 刷新 suggested-assets |
+| **7** | 晋升本项目资产到库 |
+| **8** | Git 状态 |
+| **9** | GitHub 检查 |
+| **10** | Agent CLI 自动驾驶 |
+| **11** | 归档预览 |
+| **12** | 归档执行 |
+| **13** | 更换路径 |
+| **14** | 返回主菜单 |
+| **15** | 退出 |
 
 **操作：** ↑↓ / jk 移动 · 回车确认 · **数字 + 回车**跳转（如 `11`+回车）· `0` 退出。  
 Cursor 终端方向键不稳时：`IDE_MENU_PLAIN=1 ./ide`
@@ -91,8 +112,23 @@ Cursor 终端方向键不稳时：`IDE_MENU_PLAIN=1 ./ide`
   → 项目内自动生成 docs/suggested-assets.md
 Cursor 打开项目 → AGENTS.md 指引读 suggested-assets
 任务结束 → capture-conversation.sh（含晋升评估）
-第二次跨项目仍需要 → promote-agent-asset.sh 或 ./ide → 25)
+第二次跨项目仍需要 → promote-agent-asset.sh 或 ./ide → 26)
 ```
+
+## Agent CLI 自动驾驶（可不打开 Cursor IDE）
+
+关闭 Cursor 图形界面后，在终端维护工具箱或业务项目：
+
+```bash
+cd ide-toolbox
+./agent start . --dry-run
+./agent start .
+./agent plan . "任务目标"
+./agent milestone .
+./agent run . "任务目标" --execute   # 需 config/agent_cli.allow_execute: true
+```
+
+维护 ide-toolbox 自身详见 [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)。
 
 ## 直接脚本
 
@@ -100,6 +136,8 @@ Cursor 打开项目 → AGENTS.md 指引读 suggested-assets
 ./scripts/project-health.sh /path/to/project
 ./scripts/batch-upgrade.sh --dry-run
 ./scripts/batch-upgrade.sh --execute
+./agent start . --dry-run
+./agent milestone .
 ```
 
 ## 出问题
@@ -118,5 +156,8 @@ Cursor 打开项目 → AGENTS.md 指引读 suggested-assets
 - `把本次产出晋升到 Agent Library`
 - `刷新这个项目的 suggested-assets`
 - `按 session-handoff 检查这个项目能否移交`
+- `用 agent-cli 接手这个项目，不要改文件`
+- `用 agent-cli 给这个任务做计划`
+- `用 agent-cli 做里程碑收尾`
 
 我会优先调用这里定义的脚本，而不是让你手动建目录。

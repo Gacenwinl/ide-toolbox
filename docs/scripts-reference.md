@@ -19,6 +19,8 @@
 | `query-agent-assets.sh` | 查询共享资产 | 无 | `--output` 时 |
 | `promote-agent-asset.sh` | 晋升资产到库 | 中 | 是 |
 | `session-handoff.sh` | 会话收尾移交检查 | 无 | `--summary` 时 |
+| `agent-cli.sh` | Cursor Agent CLI 自动驾驶入口 | 中 | `run --execute` 时 |
+| `agent-cli-prompt.py` | 生成 Agent CLI prompt | 无 | 否 |
 | `agent-library.py` | manifest 解析/匹配 | — | promote 时 |
 | `lib.sh` | 公共函数库 | — | 否 |
 
@@ -71,8 +73,9 @@
 | 26 | 晋升资产到库 |
 | 27 | 初始化 Agent Library |
 | 28 | 更换目标路径 |
-| 29 | Codex 接入与用户规则 |
-| 30 | 退出 |
+| 29 | Agent CLI 自动驾驶 |
+| 30 | Codex 接入与用户规则 |
+| 31 | 退出 |
 
 ### 项目菜单（已选路径后）
 
@@ -87,11 +90,12 @@
 | 7 | 晋升本项目资产到库 |
 | 8 | Git 状态 |
 | 9 | GitHub 检查 |
-| 10 | 归档预览 |
-| 11 | 归档执行 |
-| 12 | 更换路径 |
-| 13 | 返回主菜单 |
-| 14 | 退出 |
+| 10 | Agent CLI 自动驾驶 |
+| 11 | 归档预览 |
+| 12 | 归档执行 |
+| 13 | 更换路径 |
+| 14 | 返回主菜单 |
+| 15 | 退出 |
 
 ---
 
@@ -161,6 +165,7 @@ NOTION_HUB_TITLE="行前准备 Hub" \
 
 - 只补齐缺失的模板文件
 - **不覆盖**已有文件
+- 自动识别 `notion-sync` 项目，并使用 `templates/notion-project/` 补齐 `docs/ai-context.md`、`docs/agent-library.md`、`docs/suggested-assets.md`
 - 不默认 commit
 
 ---
@@ -174,8 +179,9 @@ NOTION_HUB_TITLE="行前准备 Hub" \
 
 ### 行为
 
-- 扫描 `00_FileStation` 一级目录
-- 找出缺少 `AGENTS.md` 或 `docs/runbook.md` 的项目
+- 扫描活动项目目录一级目录
+- 找出缺少 `AGENTS.md` / `docs/runbook.md` / `docs/ai-context.md` / agent-library 挂钩的项目
+- 跳过隐藏目录、`ide-toolbox`、`05_Agent-Library` 和明显非项目目录
 - 默认 dry-run
 - `--execute` 时逐个调用 `upgrade-ai-project.sh`
 
@@ -192,6 +198,7 @@ NOTION_HUB_TITLE="行前准备 Hub" \
 - 目录存在
 - Git 状态与 remote
 - 模板文件完整性
+- Notion 项目额外检查 `docs/ai-context.md`、agent-library 挂钩、Last Session 移交状态
 - 敏感文件模式
 - `gh` 就绪情况
 - 最近修改时间
@@ -200,6 +207,33 @@ NOTION_HUB_TITLE="行前准备 Hub" \
 
 - `[OK]` / `[WARN]` 列表
 - 总结与建议
+
+---
+
+## agent-cli.sh
+
+```bash
+./scripts/agent-cli.sh start /path/to/project [--dry-run]
+./scripts/agent-cli.sh plan /path/to/project "任务目标" [--dry-run]
+./scripts/agent-cli.sh run /path/to/project "任务目标" [--execute]
+./scripts/agent-cli.sh milestone /path/to/project [--dry-run]
+./scripts/agent-cli.sh new-notion PROJECT_NAME --purpose "项目目标" [--dry-run]
+```
+
+### 行为
+
+- 调用 `query-agent-assets.sh` 生成 Suggested Assets 上下文
+- 用 `templates/agent-cli/*.md` 和 `agent-cli-prompt.py` 组装标准 prompt
+- 默认使用 `cursor agent --print --workspace <project>`
+- `start` / `plan` 默认只读；`run` 未加 `--execute` 时强制计划模式
+- `run --execute` 后按配置运行 `project-health.sh` 和 `session-handoff.sh --dry-run`
+- 不默认使用 `--force` / `--yolo`
+
+### 风险
+
+- `--dry-run` 只生成 prompt，不调用 Agent
+- `run --execute` 可能修改项目文件；若 Git 工作区不干净且配置要求干净工作区，会拒绝执行
+- 删除、覆盖、权限、密钥、Git push、Notion 大规模结构修改仍必须等待用户确认
 
 ---
 

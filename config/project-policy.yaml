@@ -114,3 +114,14 @@ agent_library:
   query_on_new_project: true
   promote_requires_confirmation: true
   entries_key: "entries"
+
+agent_cli:
+  default_provider: "cursor"
+  default_model: ""
+  default_mode: "plan"
+  allow_execute: false
+  allow_trust: true
+  use_worktree: false
+  require_clean_git_for_execute: true
+  run_health_after_execute: true
+  run_handoff_after_execute: true

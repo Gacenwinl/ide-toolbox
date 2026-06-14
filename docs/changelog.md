@@ -2,6 +2,41 @@
 
 ide-toolbox 工具箱自身变更，不是业务项目 changelog。
 
+## 2026-06-14 — Agent CLI 自动驾驶入口
+
+### 新增
+
+- `scripts/agent-cli.sh`：调用 Cursor Agent CLI 的非交互入口，支持 `start` / `plan` / `run` / `milestone` / `new-notion`
+- `scripts/agent-cli-prompt.py`：读取项目上下文和 suggested-assets，生成标准 Agent prompt
+- `templates/agent-cli/`：自动驾驶 prompt 模板
+- `config/project-policy.yaml`：新增 `agent_cli.*` 安全默认值
+- `./ide`：新增 Agent CLI 自动驾驶菜单入口
+
+### 安全
+
+- 默认不使用 `--force` / `--yolo`
+- `run` 未加 `--execute` 时强制计划模式
+- 执行模式下若目标 Git 工作区不干净，默认拒绝继续
+
+### 文档
+
+- 新增 `docs/agent-cli-self-maintenance.md`
+- 同步 `AGENTS.md`、`automation-playbook.md`、`docs/runbook.md`、`docs/onboarding.md`、`docs/maintenance.md`、`docs/README.md`、`.cursor/rules/project-toolbox.mdc`
+- 根目录 `./agent` 包装脚本
+
+## 2026-06-14 — Notion 项目无感移交与复利接线
+
+### 更新
+
+- `templates/notion-project/`：新增 `docs/ai-context.md`、`docs/agent-library.md`、`docs/suggested-assets.md`
+- `templates/notion-project/AGENTS.md` / Cursor rule：要求启动读取 ai-context / suggested-assets，结束运行 session-handoff
+- `new-ai-project.sh`：`notion-sync` 项目也执行 `wire_agent_library`
+- `upgrade-ai-project.sh`：自动识别 Notion 项目并用 Notion 模板补缺失文件，不覆盖已有文件
+- `project-health.sh`：Notion 项目也检查 ai-context、Last Session、Agent Library 挂钩
+- `README.md` / `README.html` / `docs/scripts-reference.md`：补充 Notion 项目同样具备移交记忆与复利建议资产
+- `query-agent-assets.sh`：修复变量后接中文标点导致的 Bash 参数展开问题，并补充 `notion-sync` 类型说明
+- `05_Agent-Library`：晋升去敏 playbook `notion-project-handoff-agent-library`
+
 ## 2026-06-14 — 用户可见复利用法补齐
 
 ### 更新

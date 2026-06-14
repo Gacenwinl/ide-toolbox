@@ -65,6 +65,26 @@
 
 编辑 `config/project-policy.yaml` 的 `archive.archive_subdir`，默认 `99_归档`。
 
+### 修改 Agent CLI 策略
+
+编辑 `config/project-policy.yaml` 的 `agent_cli.*`：
+
+| 键 | 含义 |
+|---|---|
+| `default_provider` | 执行后端（当前 `cursor`） |
+| `default_mode` | 默认模式（`plan` 只读） |
+| `allow_execute` | 是否允许 `run --execute` 改文件 |
+| `require_clean_git_for_execute` | 执行前是否要求 Git 干净 |
+
+改完后验证：
+
+```bash
+./agent start . --dry-run
+python3 -m py_compile scripts/agent-cli-prompt.py
+```
+
+详见 [agent-cli-self-maintenance.md](agent-cli-self-maintenance.md)。
+
 ### 新增脚本
 
 1. 在 `scripts/` 创建 `xxx.sh`
@@ -90,6 +110,7 @@
 | `privacy_profiles.*` | 隐私与 GitHub 策略 |
 | `github.default_visibility` | 默认是否建远程 |
 | `archive.default_dry_run` | 归档是否默认预览 |
+| `agent_cli.*` | Agent CLI 默认模式与执行安全 |
 
 ## 文档维护清单
 

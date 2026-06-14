@@ -71,6 +71,29 @@ read_recent_policy_value() {
   ' "$POLICY_FILE"
 }
 
+read_agent_cli_policy_value() {
+  local key="$1"
+  local default="${2:-}"
+  if [[ ! -f "$POLICY_FILE" ]]; then
+    echo "$default"
+    return
+  fi
+  awk -v key="$key" -v default="$default" '
+    /^agent_cli:/ { in_section=1; next }
+    in_section && /^[A-Za-z]/ && $0 !~ /^  / { in_section=0 }
+    in_section && $0 ~ "^  " key ":" {
+      line=$0
+      sub(/^[^:]*:[ ]*"?/, "", line)
+      sub(/".*$/, "", line)
+      gsub(/[[:space:]]+$/, "", line)
+      print line
+      found=1
+      exit
+    }
+    END { if (!found) print default }
+  ' "$POLICY_FILE"
+}
+
 detect_device_profile() {
   if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
     echo "windows"
@@ -132,10 +155,6 @@ resolve_agent_library_dir() {
   win_path="$(read_policy_value "agent_library_windows_sync" "")"
   resources_path="$(read_policy_value "resources" "")"
 
-  if [[ -n "$nas_path" && -d "$nas_path" ]]; then
-    echo "$nas_path"
-    return
-  fi
   if [[ "$profile" == "windows" && -n "$win_path" && -d "$win_path" ]]; then
     echo "$win_path"
     return
@@ -146,6 +165,14 @@ resolve_agent_library_dir() {
   fi
   if [[ -n "$resources_path" && -d "${resources_path}/05_Agent-Library" ]]; then
     echo "${resources_path}/05_Agent-Library"
+    return
+  fi
+  if [[ -n "$nas_path" && -d "$nas_path" ]]; then
+    echo "$nas_path"
+    return
+  fi
+  if [[ "$profile" == "macbook" && -n "$sync_path" ]]; then
+    echo "$sync_path"
     return
   fi
   if [[ -n "$nas_path" ]]; then
@@ -240,7 +267,7 @@ select_recent_project() {
   local choice="$1"
   list_recent_projects
   if (( choice < 1 || choice > 10 )); then
-    die "无效项目编号: $choice（快速打开为 1-10）"
+    die "无效项目编号: ${choice}（快速打开为 1-10）"
   fi
   if (( choice > ${#RECENT_PROJECT_PATHS[@]} )); then
     die "编号 ${choice} 无对应项目（当前仅 ${#RECENT_PROJECT_PATHS[@]} 个最近项目）"
@@ -278,6 +305,72 @@ resolve_template_dir() {
 is_notion_project() {
   local dir="$1"
   [[ -f "${dir}/manifest.yaml" && -f "${dir}/NOTION_INDEX.md" ]]
+}
+
+detect_project_type() {
+  local dir="$1"
+  if is_notion_project "$dir"; then
+    echo "notion-sync"
+  elif [[ -f "${dir}/docs/ai-context.md" ]]; then
+    awk '
+      /^## Source Of Truth/ { exit }
+      /^## Privacy Profile/ { in_privacy=1; next }
+      /^## / && in_privacy { in_privacy=0 }
+      /^## Purpose/ { in_purpose=1; next }
+      /^## / && in_purpose { in_purpose=0 }
+      END { print "code" }
+    ' "${dir}/docs/ai-context.md" >/dev/null 2>&1 || true
+    echo "code"
+  else
+    echo "code"
+  fi
+}
+
+detect_project_privacy() {
+  local dir="$1"
+  if [[ -f "${dir}/docs/agent-library.md" ]]; then
+    if grep -q "Privacy Profile: \`private-local\`" "${dir}/docs/agent-library.md" 2>/dev/null; then
+      echo "private-local"
+      return
+    fi
+    if grep -q "Privacy Profile: \`knowledge\`" "${dir}/docs/agent-library.md" 2>/dev/null; then
+      echo "knowledge"
+      return
+    fi
+    if grep -q "Privacy Profile: \`automation\`" "${dir}/docs/agent-library.md" 2>/dev/null; then
+      echo "automation"
+      return
+    fi
+  fi
+  if [[ -f "${dir}/docs/ai-context.md" ]] && grep -q "Profile: \`private-local\`" "${dir}/docs/ai-context.md" 2>/dev/null; then
+    echo "private-local"
+    return
+  fi
+  echo "code"
+}
+
+cursor_agent_available() {
+  command -v cursor >/dev/null 2>&1 && cursor agent --help >/dev/null 2>&1
+}
+
+resolve_agent_cli_provider() {
+  local requested="${1:-}"
+  local default_provider
+  default_provider="$(read_agent_cli_policy_value default_provider cursor)"
+  requested="${requested:-$default_provider}"
+  case "$requested" in
+    cursor)
+      cursor_agent_available || die "Cursor Agent CLI 不可用。请确认 cursor 已安装且支持: cursor agent --help"
+      echo "cursor"
+      ;;
+    codex)
+      command -v codex >/dev/null 2>&1 || die "Codex CLI 不可用。当前第一版建议使用 --provider cursor"
+      echo "codex"
+      ;;
+    *)
+      die "未知 Agent CLI provider: $requested"
+      ;;
+  esac
 }
 
 replace_placeholders() {
@@ -397,12 +490,32 @@ check_sensitive_files() {
 
 project_missing_scaffold() {
   local dir="$1"
-  [[ ! -f "${dir}/AGENTS.md" || ! -f "${dir}/docs/runbook.md" ]]
+  if is_notion_project "$dir"; then
+    [[ ! -f "${dir}/AGENTS.md" || ! -f "${dir}/docs/HANDOFF.md" || ! -f "${dir}/docs/ai-context.md" ]]
+  else
+    [[ ! -f "${dir}/AGENTS.md" || ! -f "${dir}/docs/runbook.md" || ! -f "${dir}/docs/ai-context.md" ]]
+  fi
+}
+
+project_upgrade_scan_candidate() {
+  local dir="$1"
+  local name
+  name="$(basename "$dir")"
+
+  [[ "$name" == .* ]] && return 1
+  [[ "$name" == "ide-toolbox" ]] && return 1
+  [[ "$name" == "05_Agent-Library" ]] && return 1
+
+  if [[ -d "${dir}/.git" || -f "${dir}/AGENTS.md" || -f "${dir}/manifest.yaml" || -f "${dir}/README.md" ]]; then
+    return 0
+  fi
+
+  [[ "$name" =~ ^[0-9]{6}[-_] ]]
 }
 
 project_missing_agent_library_hook() {
   local dir="$1"
-  [[ ! -f "${dir}/docs/agent-library.md" ]]
+  [[ ! -f "${dir}/docs/agent-library.md" || ! -f "${dir}/docs/suggested-assets.md" || ! -f "${dir}/docs/ai-context.md" ]]
 }
 
 plain_menu_select() {

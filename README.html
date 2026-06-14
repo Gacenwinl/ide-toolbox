@@ -416,7 +416,7 @@
         <div class="card">
           <div class="card-icon">📓</div>
           <h3>Notion 双轨</h3>
-          <p>manifest + NOTION_INDEX + CSV 镜像，本地结构、Notion 执行。</p>
+          <p>manifest + NOTION_INDEX + CSV 镜像；也自带 ai-context、handoff、suggested-assets。</p>
         </div>
         <div class="card">
           <div class="card-icon">🖥️</div>
@@ -432,6 +432,11 @@
           <div class="card-icon">♻️</div>
           <h3>Agent 复利</h3>
           <p>新项目自动生成 suggested-assets；第二次跨项目仍需要时，再晋升到 05_Agent-Library。</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h3>Agent CLI 自动驾驶</h3>
+          <p>命令行调用 <code>cursor agent</code>，自动组装上下文、查询复利库、执行 health/handoff。</p>
         </div>
       </div>
     </section>
@@ -466,6 +471,7 @@
           </tr>
         </tbody>
       </table>
+      <p class="section-desc" style="margin-top:12px">当前库内已晋升 <code>notion-project-handoff-agent-library</code>，新建或升级 Notion 双轨项目时可被自动匹配。</p>
       <pre><span class="kw">./scripts/session-handoff.sh</span> <span class="str">"/path/to/project"</span>
 <span class="kw">./scripts/query-agent-assets.sh</span> --task <span class="str">"任务关键词"</span>
 <span class="kw">./scripts/promote-agent-asset.sh</span> --project <span class="str">"/path"</span> --source <span class="str">"docs/x.md"</span> --id <span class="str">"asset-id"</span> --title <span class="str">"标题"</span></pre>
@@ -517,6 +523,10 @@
           <p>聊天不是记忆；重要结论写入 <code>docs/ai-context.md</code> 或 <code>docs/YYYYMMDD-*.md</code>。</p>
         </div>
         <div class="card">
+          <h3>Notion 项目</h3>
+          <p>新建时同样生成 <code>docs/ai-context.md</code>、<code>docs/HANDOFF.md</code>、<code>docs/suggested-assets.md</code>，旧项目可用 upgrade 补齐。</p>
+        </div>
+        <div class="card">
           <h3>收尾门禁</h3>
           <p>有 WARN 先修 WARN，不继续扩功能：<code>./scripts/session-handoff.sh /path/to/project</code></p>
         </div>
@@ -560,6 +570,27 @@
     </section>
 
     <section>
+      <h2>Agent CLI 自动驾驶</h2>
+      <p class="section-desc">不打开 Cursor 图形界面，也能由 ide-toolbox 在命令行里驱动 Cursor Agent。</p>
+      <table>
+        <thead>
+          <tr><th>命令</th><th>用途</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>start</code></td><td>只读接手项目，汇报状态、风险和 suggested-assets</td></tr>
+          <tr><td><code>plan</code></td><td>只读生成计划，列出影响范围、验证、回滚</td></tr>
+          <tr><td><code>run --execute</code></td><td>受控执行任务，结束后接 health / handoff</td></tr>
+          <tr><td><code>milestone</code></td><td>里程碑收尾，检查 ai-context 和下一步</td></tr>
+          <tr><td><code>new-notion</code></td><td>新建 Notion 双轨项目并生成接手 prompt</td></tr>
+        </tbody>
+      </table>
+      <pre><span class="kw">./scripts/agent-cli.sh</span> start <span class="str">"/path/to/project"</span> --dry-run
+<span class="kw">./scripts/agent-cli.sh</span> plan <span class="str">"/path/to/project"</span> <span class="str">"任务目标"</span> --dry-run
+<span class="kw">./scripts/agent-cli.sh</span> run <span class="str">"/path/to/project"</span> <span class="str">"任务目标"</span> --execute</pre>
+      <p class="section-desc" style="margin-top:12px">默认不使用 <code>--force</code> / <code>--yolo</code>；删除、覆盖、权限、密钥、Git push、Notion 大规模结构修改仍必须确认。</p>
+    </section>
+
+    <section>
       <h2>./ide 主菜单</h2>
       <p class="section-desc">合一列表，编号固定；详细见 automation-playbook.md。</p>
       <table>
@@ -572,8 +603,8 @@
           <tr><td>12</td><td>新建 Notion 维护项目</td></tr>
           <tr><td>13–24</td><td>体检、升级、沉淀、收尾移交、登记设备、批量升级、设备检查、GitHub、归档、索引、存储策略</td></tr>
           <tr><td>25–27</td><td>查询 Agent 资产库、晋升资产到库、初始化 Agent Library</td></tr>
-          <tr><td>28–29</td><td>更换路径、Codex 接入与用户规则</td></tr>
-          <tr><td>30 / 0</td><td>退出</td></tr>
+          <tr><td>28–30</td><td>更换路径、Agent CLI 自动驾驶、Codex 接入与用户规则</td></tr>
+          <tr><td>31 / 0</td><td>退出</td></tr>
         </tbody>
       </table>
     </section>

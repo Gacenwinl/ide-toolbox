@@ -24,8 +24,7 @@ candidates=()
 agent_hook_candidates=()
 
 while IFS= read -r -d '' dir; do
-  name="$(basename "$dir")"
-  [[ "$name" == "ide-toolbox" ]] && continue
+  project_upgrade_scan_candidate "$dir" || continue
   if project_missing_scaffold "$dir"; then
     candidates+=("$dir")
   fi
@@ -35,7 +34,7 @@ while IFS= read -r -d '' dir; do
 done < <(find "$ACTIVE_DIR" -mindepth 1 -maxdepth 1 -type d -print0)
 
 printf '\n扫描目录: %s\n' "$ACTIVE_DIR"
-printf '候选升级项目（缺 AGENTS/runbook）: %d\n' "${#candidates[@]}"
+printf '候选升级项目（缺项目接手骨架）: %d\n' "${#candidates[@]}"
 printf '缺少 agent-library 挂钩: %d\n\n' "${#agent_hook_candidates[@]}"
 
 if [[ "${#candidates[@]}" -eq 0 && "${#agent_hook_candidates[@]}" -eq 0 ]]; then

@@ -16,6 +16,7 @@ IDE Toolbox（`ide-toolbox`）工具箱文档入口。先看 [README.md](../READ
 | [../automation-playbook.md](../automation-playbook.md) | 日常操作与 `./ide` 菜单 |
 | [../storage-policy.md](../storage-policy.md) | 多端路径推荐策略与项目生命周期 |
 | [troubleshooting.md](troubleshooting.md) | 常见问题与修复 |
+| [agent-cli-self-maintenance.md](agent-cli-self-maintenance.md) | 关闭 Cursor IDE 后用 `./agent` 维护工具箱 |
 
 ## 开发 / 维护文档
 
@@ -53,3 +54,4 @@ IDE Toolbox（`ide-toolbox`）工具箱文档入口。先看 [README.md](../READ
 1. architecture.md
 2. scripts-reference.md
 3. maintenance.md
+4. agent-cli-self-maintenance.md（关闭 Cursor IDE 后）

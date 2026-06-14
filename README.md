@@ -34,6 +34,7 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 | [docs/scripts-reference.md](docs/scripts-reference.md) | 脚本参考 |
 | [docs/troubleshooting.md](docs/troubleshooting.md) | 故障排查 |
 | [docs/maintenance.md](docs/maintenance.md) | 维护手册 |
+| [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md) | 关闭 Cursor IDE 后用 `./agent` 自维护 |
 | [docs/changelog.md](docs/changelog.md) | 变更记录 |
 
 ## 核心能力
@@ -44,6 +45,7 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 - 设备接入检查 + 项目设备登记
 - Codex 用户级规则模板（对齐 Cursor 项目级 rules）
 - **Agent 复利**：`05_Agent-Library` + 新建项目自动 `suggested-assets.md`（见下节）
+- **Agent CLI 自动驾驶**：`ide-toolbox` 可调用 `cursor agent` 进行接手、计划、执行、里程碑收尾
 - 多端路径：**MacBook / Windows** Drive 同步 · **Mac mini** NAS 挂载（见 `storage-policy.md`）
 
 ## Agent 复利（Hub）
@@ -68,9 +70,27 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 4. 收尾检查：`./scripts/session-handoff.sh /path/to/project`
 5. 第二次跨项目仍需要的 SOP/Skill：再用 `promote-agent-asset.sh` 或 `./ide` → **26) 晋升资产到库**
 
+当前库内已包含 Notion 双轨项目移交 playbook：`notion-project-handoff-agent-library`，新建或升级 Notion 项目时会被 `query-agent-assets.sh` 匹配到。
+
 不会后台自动总结所有聊天；它提供的是**自动结构 + 明确规则 + 收尾检查 + 手动确认晋升**。
 
 详见 [storage-policy.md](storage-policy.md) §05、[docs/ai-context.md](docs/ai-context.md)。
+
+## Agent CLI 自动驾驶
+
+如果不想打开 Cursor 图形界面，可以让 `ide-toolbox` 在命令行里调用 Cursor Agent CLI。
+
+```bash
+./scripts/agent-cli.sh start /path/to/project --dry-run
+./scripts/agent-cli.sh plan /path/to/project "任务目标" --dry-run
+./scripts/agent-cli.sh run /path/to/project "任务目标" --execute
+./scripts/agent-cli.sh milestone /path/to/project --dry-run
+./scripts/agent-cli.sh new-notion 260614-example --purpose "项目目标" --dry-run
+```
+
+它会自动组装项目上下文、查询 Agent Library、生成标准 prompt，并在执行后接入 `project-health.sh` / `session-handoff.sh`。默认不使用 `--force` / `--yolo`；删除、覆盖、权限、密钥、Git push、Notion 大规模结构修改仍需要确认。
+
+根目录快捷入口：`./agent`（等同 `scripts/agent-cli.sh`）。关闭 Cursor IDE 后的完整流程见 [docs/agent-cli-self-maintenance.md](docs/agent-cli-self-maintenance.md)。
 
 ## 项目全生命周期怎么用
 
@@ -107,6 +127,8 @@ cd "/Users/dawncity/Library/CloudStorage/SynologyDrive-FileStation/ide-toolbox"
 - `docs/agent-library.md`：共享资产库策略
 - `docs/suggested-assets.md`：自动匹配到的可复用资产（`private-local` 会跳过）
 
+Notion 维护项目也一样会生成 `docs/ai-context.md`、`docs/agent-library.md`、`docs/suggested-assets.md`。它额外使用 `docs/HANDOFF.md`、`manifest.yaml`、`NOTION_INDEX.md` 和 `data/*.csv` 做 Notion 双轨接手，不再需要手动补这些移交规则。
+
 ### 1. 开始项目：让 AI 先接手，不要直接干活
 
 打开项目目录后，先对 AI 说：
@@ -119,7 +141,7 @@ AI 应该读取：
 
 1. `AGENTS.md`
 2. `docs/ai-context.md`
-3. `docs/runbook.md`
+3. `docs/runbook.md`（普通 AI 项目）或 `docs/HANDOFF.md`（Notion 维护项目）
 4. `docs/agent-library.md`
 5. `docs/suggested-assets.md`（非 `private-local`）
 
